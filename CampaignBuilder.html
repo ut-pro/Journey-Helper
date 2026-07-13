@@ -1,0 +1,2920 @@
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Campaign Builder</title>
+    <style>
+      :root {
+        --bg: #f6f7f9;
+        --surface: #ffffff;
+        --surface-2: #f2f4f7;
+        --border: #d7dde5;
+        --ink: #1b2430;
+        --muted: #667084;
+
+        --accent: #4e9cff;
+        --accent-2: #44c4a1;
+        --ok: #28a466;
+
+        --radius: 12px;
+        --radius-lg: 14px;
+        --shadow: 0 6px 20px rgba(13, 38, 76, 0.08);
+
+        --mono:
+          ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono",
+          monospace;
+        --sans:
+          Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
+          Helvetica, Arial;
+
+        --container-max: 1080px;
+        --section-pad: 12px;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        margin: 0;
+        font-family: var(--sans);
+        color: var(--ink);
+        background: var(--bg);
+        display: grid;
+        grid-template-rows: auto 1fr;
+        min-height: 100%;
+      }
+
+      .wrap {
+        max-width: var(--container-max);
+        margin: 0 auto;
+        padding: 14px 16px;
+      }
+      .row {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+      .grow {
+        flex: 1;
+        min-width: 0;
+      }
+      .tag {
+        font-size: 12px;
+        color: var(--muted);
+        border: 1px solid var(--border);
+        padding: 4px 8px;
+        border-radius: 999px;
+        background: #ffffff;
+      }
+
+      main .wrap {
+        padding-block: 16px 24px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: 380px 1fr;
+        gap: 16px;
+        padding-inline: var(--section-pad);
+      }
+
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow);
+        min-width: 0;
+      }
+      .card h2 {
+        margin: 0;
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--border);
+        font-size: 14px;
+        letter-spacing: 0.2px;
+        color: #0f1720;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .card .body {
+        padding: 12px;
+      }
+
+      .form {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        min-width: 0;
+      }
+      .field label {
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .field label.coral-label {
+        color: dimgray;
+      }
+      .cap .label.coral-label {
+        color: darkorange;
+      }
+      .qbubble.coral-label {
+        color: darkorange;
+        border-color: coral;
+      }
+      .simple-query-head.coral-label {
+        color: darkorange;
+      }
+      .specialty-check-title.coral-label {
+        color: dimgray;
+      }
+
+      .field input,
+      .field select,
+      .field textarea {
+        color: white !important;
+      }
+
+      .cap .value,
+      .simple-query .query-box {
+        color: white !important;
+      }
+
+      .output-value {
+        color: white !important;
+      }
+
+      .input,
+      select,
+      input[type="date"] {
+        background: var(--surface-2);
+        color: var(--ink);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 10px 12px;
+        font-size: 14px;
+        outline: none;
+        min-width: 0;
+        width: 100%;
+      }
+      .input:focus,
+      select:focus,
+      input[type="date"]:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(78, 156, 255, 0.18);
+        background: #fff;
+      }
+      .hint {
+        font-size: 11px;
+        color: var(--muted);
+      }
+
+      .row-buttons {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        margin-top: 8px;
+        flex-wrap: wrap;
+      }
+
+      .btn {
+        border: 1px solid var(--border);
+        color: var(--ink);
+        background: #eef3fb;
+        padding: 10px 14px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 600;
+        letter-spacing: 0.2px;
+      }
+      .btn:hover {
+        border-color: var(--accent);
+        background: #e7f0ff;
+      }
+      .btn.primary {
+        background: #e8f6ff;
+        border-color: #b9d8ff;
+      }
+
+      .subtle {
+        border: 1px dashed var(--border);
+        border-radius: var(--radius);
+        padding: 10px;
+        color: var(--muted);
+        font-size: 12px;
+        background: #fafbfc;
+      }
+
+      .caps {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      .cap {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 8px 10px;
+        min-width: 0;
+      }
+      .cap .label {
+        font-size: 12px;
+        color: var(--muted);
+        font-weight: bold;
+      }
+      .cap .value-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+      }
+      .cap .value {
+        font-family: var(--mono);
+        font-size: 13px;
+        color: #0f1720;
+        white-space: nowrap;
+        overflow-x: auto;
+        padding: 8px 10px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: #fff;
+        flex: 1;
+        min-width: 0;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      .cap .value::-webkit-scrollbar {
+        display: none;
+      }
+
+      .icon-btn {
+        --sz: 34px;
+        width: var(--sz);
+        height: var(--sz);
+        flex-shrink: 0;
+        display: grid;
+        place-items: center;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: #ffffff;
+        cursor: pointer;
+        position: relative;
+      }
+      .glyph {
+        width: 18px;
+        height: 18px;
+        color: var(--muted);
+      }
+      .glyph path {
+        fill: currentColor;
+      }
+      .tick {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--ok);
+        opacity: 0;
+        transform: scale(0);
+        transition: all 0.3s ease;
+        pointer-events: none;
+      }
+
+      .icon-btn.copied .tick {
+        opacity: 1;
+        transform: scale(1);
+      }
+      .icon-btn.copied .glyph {
+        opacity: 0;
+      }
+      .icon-btn.copied .tick {
+        opacity: 1;
+        transform: scale(1);
+      }
+      .icon-btn:hover {
+        border-color: var(--accent);
+        background: #f7fbff;
+      }
+
+      .queries {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+      .q {
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        background: var(--surface);
+      }
+      .qhead {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 10px 12px;
+        border-bottom: 1px solid var(--border);
+        background: #f7f9fc;
+      }
+      .qtitle {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        min-width: 0;
+        flex: 1;
+      }
+      .qbubble {
+        font-size: 11px;
+        padding: 2px 8px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        color: #0f1720;
+        background: #fff;
+        flex-shrink: 0;
+        font-weight: bold;
+      }
+      .qname-container {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex: 1;
+        min-width: 0;
+      }
+      .qname {
+        font-family: var(--mono);
+        font-size: 12px;
+        color: #0f1720;
+        padding: 6px 8px;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: #fff;
+        white-space: nowrap;
+        overflow-x: auto;
+        flex: 1;
+        min-width: 0;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      .qname::-webkit-scrollbar {
+        display: none;
+      }
+
+      .qbody {
+        padding: 10px;
+        position: relative;
+      }
+      .sql-container {
+        position: relative;
+      }
+      .sql {
+        font-family: var(--mono);
+        white-space: pre;
+        color: #0f1720;
+        font-size: 13px;
+        padding: 12px 14px;
+        border: 1px dashed var(--border);
+        border-radius: var(--radius);
+        background: #fff;
+        overflow-x: auto;
+        min-height: 60px;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      .sql::-webkit-scrollbar {
+        display: none;
+      }
+      .sql-copy-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+      }
+
+      .additional-queries {
+        margin-top: 16px;
+        display: grid;
+        gap: 12px;
+      }
+      .simple-query {
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        background: var(--surface);
+        overflow: hidden;
+      }
+      .simple-query-head {
+        padding: 10px 12px;
+        background: #f7f9fc;
+        border-bottom: 1px solid var(--border);
+        font-size: 13px;
+        font-weight: bold;
+        color: #0f1720;
+      }
+      .simple-query-body {
+        padding: 10px;
+        position: relative;
+      }
+
+      .specialty-check {
+        margin-top: 16px;
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+      }
+      .specialty-check-title {
+        font-size: 13px;
+        font-weight: bold;
+        color: #0f1720;
+        margin-bottom: 10px;
+      }
+
+      .two-col {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      @media (max-width: 1120px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+        .caps {
+          grid-template-columns: 1fr;
+        }
+        .two-col {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      :root {
+        --bg: #000000;
+        --bg-secondary: #0a0a0a;
+        --surface: #121212;
+        --surface-elevated: #1a1a1a;
+        --surface-2: #1e1e1e;
+        --border: #2a2a2a;
+        --border-light: #353535;
+        --ink: #e8e8e8;
+        --ink-secondary: #c0c0c0;
+        --muted: #808080;
+
+        --accent: #a0a0a0;
+        --accent-hover: #888888;
+        --accent-2: #c0c0c0;
+        --ok: #3dd68c;
+
+        --radius: 14px;
+        --radius-lg: 18px;
+        --shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+        --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.9);
+        --glow: 0 0 20px rgba(255, 255, 255, 0.1);
+
+        --mono:
+          ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono",
+          monospace;
+        --sans:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
+          sans-serif;
+
+        --container-max: 1080px;
+        --section-pad: 16px;
+
+        --glass-bg: rgba(18, 18, 18, 0.85);
+        --glass-border: rgba(255, 255, 255, 0.08);
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+
+      body {
+        margin: 0;
+        font-family: var(--sans);
+        color: var(--ink);
+        background-color: #e1dcc9;
+        display: grid;
+        grid-template-rows: auto 1fr;
+        min-height: 100%;
+      }
+
+      .mainHeading {
+        font-family: "Cinzel", serif;
+        font-size: 3rem;
+        font-weight: 700;
+        letter-spacing: 4px;
+        text-align: center;
+        margin: 32px 0 0 0;
+        color: #1f150c;
+        position: relative;
+        z-index: 1;
+      }
+
+      .subHeading {
+        color: #412d15;
+        font-size: 1rem;
+        font-weight: 500;
+        letter-spacing: 2px;
+        text-align: center;
+        margin: 8px 0 28px 0;
+        position: relative;
+        z-index: 1;
+      }
+
+      .wrap {
+        max-width: var(--container-max);
+        margin: 0 auto;
+        padding: 16px 20px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .row {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+      .grow {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .tag {
+        font-size: 11px;
+        color: var(--muted);
+        border: 1px solid var(--border);
+        padding: 6px 12px;
+        border-radius: 20px;
+        background: var(--surface-2);
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+      }
+
+      main .wrap {
+        padding-block: 20px 32px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: 400px 1fr;
+        gap: 20px;
+        padding-inline: var(--section-pad);
+      }
+
+      .card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius-lg);
+        box-shadow:
+          var(--shadow),
+          inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        min-width: 0;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+      }
+
+      .card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.15),
+          transparent
+        );
+      }
+
+      .card:hover {
+        border-color: rgba(255, 255, 255, 0.25);
+        box-shadow:
+          var(--shadow-lg),
+          var(--glow),
+          inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        transform: translateY(-2px);
+      }
+
+      .card h2 {
+        margin: 0;
+        padding: 16px 18px;
+        border-bottom: 1px solid var(--border);
+        font-size: 15px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        color: var(--ink);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .grid .card:first-child h2 {
+        background: var(--surface-2);
+      }
+      .grid .card:last-child h2,
+      .qhead {
+        background: linear-gradient(
+          to bottom,
+          var(--surface-elevated),
+          transparent
+        );
+      }
+
+      .grid .card:first-child {
+        background: #ffffff;
+        backdrop-filter: none;
+        border: 2px solid #412d15;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+      }
+
+      .grid .card:first-child::before {
+        display: none;
+      }
+
+      .grid .card:first-child:hover {
+        border-color: #412d15;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        transform: none;
+      }
+
+      .grid .card:first-child h2 {
+        background: #faf8f3;
+        border-bottom: 2px solid #412d15;
+        color: #1f150c;
+        font-family: Arial, sans-serif;
+      }
+
+      .grid .card:first-child .field label {
+        color: #6a5945;
+      }
+
+      .grid .card:first-child .field input,
+      .grid .card:first-child .field select,
+      .grid .card:first-child .field textarea {
+        color: #1f150c !important;
+      }
+
+      .grid .card:first-child .input,
+      .grid .card:first-child select,
+      .grid .card:first-child input[type="date"] {
+        background: #faf8f3;
+        color: #1f150c;
+        border: 2px solid #412d15;
+        border-radius: 10px;
+        padding: 12px 14px;
+        font-size: 14px;
+        outline: none;
+        min-width: 0;
+        width: 100%;
+        transition: all 0.2s ease;
+      }
+
+      .grid .card:first-child .input:focus,
+      .grid .card:first-child select:focus,
+      .grid .card:first-child input[type="date"]:focus {
+        border-color: #1f150c;
+        background: #ffffff;
+        box-shadow: 0 0 0 3px rgba(65, 45, 21, 0.15);
+        transform: none;
+      }
+
+      .grid .card:first-child .hint {
+        font-size: 11px;
+        color: #6a5945;
+      }
+
+      .grid .card:first-child .btn {
+        border: none;
+        color: #ffffff;
+        background: #412d15;
+        padding: 10px 18px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 700;
+        letter-spacing: normal;
+        font-size: 13px;
+        text-transform: none;
+        transition: all 0.2s ease;
+        box-shadow: none;
+      }
+
+      .grid .card:first-child .btn:hover {
+        background: #1f150c;
+        box-shadow: none;
+        transform: translateY(-2px);
+      }
+
+      .grid .card:first-child .btn:active {
+        transform: translateY(0);
+      }
+
+      .grid .card:first-child .btn.primary {
+        background: #412d15;
+        border-color: transparent;
+        box-shadow: none;
+      }
+
+      .grid .card:first-child .field label.coral-label {
+        color: #6a5945;
+      }
+
+      .grid .card:first-child select option,
+      .grid .card:first-child select optgroup {
+        color: #1f150c;
+        background: #ffffff;
+      }
+
+      .grid .card:last-child {
+        background: #ffffff;
+        backdrop-filter: none;
+        border: 2px solid #412d15;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+      }
+
+      .grid .card:last-child::before {
+        display: none;
+      }
+
+      .grid .card:last-child:hover {
+        border-color: #412d15;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        transform: none;
+      }
+
+      .grid .card:last-child h2 {
+        background: #faf8f3;
+        border-bottom: 2px solid #412d15;
+        color: #1f150c;
+        font-family: Arial, sans-serif;
+      }
+
+      /* Cap boxes (FlatFile Name, Email Template Name, DE Name, Automation Name, Journey Name) */
+      .grid .card:last-child .cap {
+        background: #faf8f3;
+        border: 1px solid #412d15;
+        box-shadow: none;
+      }
+
+      .grid .card:last-child .cap:hover {
+        background: #faf8f3;
+        border-color: #412d15;
+        box-shadow: none;
+      }
+
+      .grid .card:last-child .cap .label {
+        color: #6a5945;
+      }
+
+      .grid .card:last-child .cap .value {
+        font-family: var(--mono);
+        color: #1f150c;
+        background: #ffffff;
+        border: 1px solid #412d15;
+      }
+
+      .grid .card:last-child .cap .value::-webkit-scrollbar {
+        display: none;
+      }
+
+      /* Copy icon-buttons (shared across cap, qname, sql) */
+      .grid .card:last-child .icon-btn {
+        background: #faf8f3;
+        border: 1px solid #412d15;
+      }
+
+      .grid .card:last-child .icon-btn:hover {
+        background: #ffffff;
+        border-color: #1f150c;
+        box-shadow: none;
+      }
+
+      .grid .card:last-child .glyph {
+        color: #6a5945;
+      }
+
+      .grid .card:last-child .icon-btn:hover .glyph {
+        color: #1f150c;
+      }
+
+      .grid .card:last-child .icon-btn.copied .glyph {
+        opacity: 0;
+      }
+
+      .grid .card:last-child .tick {
+        color: #2e7d32;
+      }
+
+      /* Query sections Q1/Q2/Q3 */
+      .grid .card:last-child .q {
+        background: #faf8f3;
+        border: 1px solid #412d15;
+      }
+
+      .grid .card:last-child .q:hover {
+        border-color: #412d15;
+        box-shadow: none;
+      }
+
+      .grid .card:last-child .qhead {
+        background: #ffffff;
+        border-bottom: 1px solid #412d15;
+      }
+
+      .grid .card:last-child .qbubble {
+        color: #1f150c;
+        background: #e1dcc9;
+        border: 1px solid #412d15;
+      }
+
+      .grid .card:last-child .qname {
+        color: #1f150c;
+        background: #ffffff;
+        border: 1px solid #412d15;
+      }
+
+      .grid .card:last-child .qname::-webkit-scrollbar {
+        display: none;
+      }
+
+      /* SQL / output containers (Q1-3 bodies, Eligible Count, FinalCount_By_Specialty) */
+      .grid .card:last-child .sql {
+        color: #1f150c;
+        background: #ffffff;
+        border: 1px dashed #412d15;
+      }
+
+      .grid .card:last-child .sql::-webkit-scrollbar {
+        display: none;
+      }
+
+      /* Simple Query sections (Eligible Count, FinalCount_By_Specialty) */
+      .grid .card:last-child .simple-query {
+        background: #faf8f3;
+        border: 1px solid #412d15;
+      }
+
+      .grid .card:last-child .simple-query:hover {
+        border-color: #412d15;
+        box-shadow: none;
+      }
+
+      .grid .card:last-child .simple-query-head {
+        background: #ffffff;
+        border-bottom: 1px solid #412d15;
+        color: #1f150c;
+      }
+
+      .grid .card:last-child .cap .value,
+      .grid .card:last-child .simple-query .query-box,
+      .grid .card:last-child .output-value {
+        color: #1f150c !important;
+      }
+
+      /* ===== Specialty Check section (Input card) ===== */
+      .grid .card:first-child .specialty-check {
+        border-top: 1px solid #412d15;
+      }
+
+      .grid .card:first-child .specialty-check-title,
+      .grid .card:first-child .specialty-check-title.coral-label {
+        color: #6a5945;
+      }
+
+      .grid .card:first-child .sql {
+        color: #1f150c;
+        background: #ffffff;
+        border: 1px dashed #412d15;
+      }
+
+      .grid .card:first-child .sql::-webkit-scrollbar {
+        display: none;
+      }
+
+      .grid .card:first-child .icon-btn {
+        background: #faf8f3;
+        border: 1px solid #412d15;
+      }
+
+      .grid .card:first-child .icon-btn:hover {
+        background: #ffffff;
+        border-color: #1f150c;
+        box-shadow: none;
+      }
+
+      .grid .card:first-child .glyph {
+        color: #6a5945;
+      }
+
+      .grid .card:first-child .icon-btn:hover .glyph {
+        color: #1f150c;
+      }
+
+      /* Small patch: divider above Seed List Generator button */
+      .grid .card:first-child .sql-container > div {
+        border-top-color: #412d15;
+      }
+
+      /* ===== Seed List page ===== */
+      #seedPage .seed-header {
+        background: #ffffff;
+        border: 2px solid #412d15;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        border-radius: 16px;
+      }
+
+      #seedPage .seed-header::before {
+        display: none;
+      }
+
+      #seedPage .seed-header h1 {
+        font-family: "Cinzel", serif;
+        color: #1f150c;
+        background: none;
+        -webkit-background-clip: initial;
+        -webkit-text-fill-color: initial;
+        background-clip: initial;
+      }
+
+      #seedPage .back-btn-small {
+        border: none;
+        color: #ffffff;
+        background: #412d15;
+        box-shadow: none;
+      }
+
+      #seedPage .back-btn-small:hover {
+        border-color: transparent;
+        background: #1f150c;
+        box-shadow: none;
+        transform: translateY(-2px);
+      }
+
+      #seedPage .seed-container {
+        background: #ffffff;
+        border: 2px solid #412d15;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        border-radius: 16px;
+      }
+
+      #seedPage .seed-container::before {
+        display: none;
+      }
+
+      #seedPage .seed-label {
+        color: #6a5945;
+      }
+
+      #seedPage .seed-select,
+      #seedPage .seed-textarea {
+        background: #faf8f3;
+        color: #1f150c;
+        border: 1px solid #412d15;
+        border-radius: 10px;
+      }
+
+      #seedPage .seed-select:focus,
+      #seedPage .seed-textarea:focus {
+        border-color: #1f150c;
+        background: #ffffff;
+        box-shadow:
+          0 0 0 3px rgba(65, 45, 21, 0.15),
+          0 4px 12px rgba(0, 0, 0, 0.08);
+      }
+
+      #seedPage .seed-select option,
+      #seedPage .seed-select optgroup {
+        color: #1f150c;
+        background: #ffffff;
+      }
+
+      #seedPage .seed-note {
+        color: #6a5945;
+      }
+
+      #seedPage .seed-btn {
+        border: none;
+        color: #ffffff;
+        background: #412d15;
+        box-shadow: none;
+      }
+
+      #seedPage .seed-btn:hover {
+        background: #1f150c;
+        box-shadow: none;
+      }
+
+      #seedPage .seed-download-link {
+        background: #2e7d32;
+        box-shadow: 0 6px 20px rgba(46, 125, 50, 0.25);
+      }
+
+      #seedPage .seed-download-link:hover {
+        background: #256428;
+        box-shadow: 0 8px 28px rgba(46, 125, 50, 0.35);
+      }
+
+      .grid .card:first-child .specialty-check .sql-container {
+        position: relative;
+        min-height: 60px;
+      }
+
+      .grid .card:first-child .specialty-check .sql {
+        min-height: 60px;
+        box-sizing: border-box;
+        padding: 12px 14px;
+      }
+
+      .grid .card:first-child .specialty-check .sql-copy-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+      }
+
+      .card .body {
+        padding: 16px;
+      }
+
+      .form {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        min-width: 0;
+      }
+
+      .field label {
+        font-size: 12px;
+        color: var(--muted);
+        font-weight: 600;
+        letter-spacing: 0.3px;
+        text-transform: uppercase;
+      }
+
+      .input,
+      select,
+      input[type="date"] {
+        background: var(--surface-2);
+        color: var(--ink);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 12px 14px;
+        font-size: 14px;
+        outline: none;
+        min-width: 0;
+        width: 100%;
+        transition: all 0.2s ease;
+      }
+
+      .input:focus,
+      select:focus,
+      input[type="date"]:focus {
+        border-color: var(--accent);
+        background: var(--surface-elevated);
+        box-shadow:
+          0 0 0 3px rgba(255, 255, 255, 0.15),
+          0 4px 12px rgba(0, 0, 0, 0.4);
+        transform: translateY(-1px);
+      }
+
+      .hint {
+        font-size: 11px;
+        color: var(--muted);
+      }
+
+      .row-buttons {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        margin-top: 12px;
+        flex-wrap: wrap;
+      }
+
+      .btn {
+        border: 1px solid #165016;
+        color: #fff;
+        background: linear-gradient(135deg, #1a5c1a 0%, #228b22 100%);
+        padding: 11px 18px;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        font-size: 13px;
+        text-transform: uppercase;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      }
+
+      .btn:hover {
+        border-color: var(--accent);
+        background: linear-gradient(
+          135deg,
+          var(--accent) 0%,
+          var(--accent-hover) 100%
+        );
+        box-shadow: 0 6px 20px rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+      }
+
+      .btn.primary {
+        background: linear-gradient(
+          135deg,
+          var(--accent) 0%,
+          var(--accent-hover) 100%
+        );
+        border-color: var(--accent);
+        box-shadow: 0 6px 20px rgba(255, 255, 255, 0.25);
+      }
+
+      .subtle {
+        border: 1px dashed var(--border);
+        border-radius: var(--radius);
+        padding: 12px;
+        color: var(--muted);
+        font-size: 12px;
+        background: var(--surface-2);
+      }
+
+      .caps {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
+      .cap {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 12px 14px;
+        min-width: 0;
+        transition: all 0.2s ease;
+      }
+
+      .cap:hover {
+        background: var(--surface-elevated);
+        border-color: var(--accent);
+        box-shadow: 0 4px 16px rgba(255, 255, 255, 0.15);
+      }
+
+      .cap .label {
+        font-size: 11px;
+        color: var(--muted);
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+      }
+
+      .cap .value-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+      }
+
+      .cap .value {
+        font-family: var(--mono);
+        font-size: 13px;
+        color: var(--accent);
+        white-space: nowrap;
+        overflow-x: auto;
+        padding: 10px 12px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: var(--bg-secondary);
+        flex: 1;
+        min-width: 0;
+        font-weight: 600;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+
+      .cap .value::-webkit-scrollbar {
+        display: none;
+      }
+
+      .icon-btn {
+        --sz: 38px;
+        width: var(--sz);
+        height: var(--sz);
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: var(--surface-2);
+        cursor: pointer;
+        position: relative;
+        transition: all 0.2s ease;
+      }
+
+      .glyph {
+        width: 18px;
+        height: 18px;
+        color: var(--muted);
+      }
+      .glyph path {
+        fill: currentColor;
+      }
+
+      .tick {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        color: var(--ok);
+        opacity: 0;
+        transform: scale(0.8);
+        transition: all 0.2s ease;
+      }
+
+      .icon-btn.copied .glyph {
+        opacity: 0;
+      }
+      .icon-btn.copied .tick {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      .icon-btn:hover {
+        border-color: var(--accent);
+        background: var(--surface-elevated);
+        box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+      }
+
+      .icon-btn:hover .glyph {
+        color: var(--accent);
+      }
+
+      .queries {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+
+      .q {
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        background: var(--surface-2);
+        transition: all 0.3s ease;
+      }
+
+      .q:hover {
+        border-color: var(--accent);
+        box-shadow: 0 8px 24px rgba(255, 255, 255, 0.15);
+      }
+
+      .qhead {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--border);
+        background: linear-gradient(
+          to bottom,
+          var(--surface-elevated),
+          transparent
+        );
+      }
+
+      .qtitle {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        min-width: 0;
+        flex: 1;
+      }
+
+      .qbubble {
+        font-size: 11px;
+        padding: 4px 10px;
+        border-radius: 20px;
+        border: 1px solid var(--accent);
+        color: var(--accent);
+        background: rgba(160, 160, 160, 0.15);
+        flex-shrink: 0;
+        font-weight: 800;
+      }
+
+      .qname-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex: 1;
+        min-width: 0;
+      }
+
+      .qname {
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--accent-2);
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        background: var(--bg-secondary);
+        white-space: nowrap;
+        overflow-x: auto;
+        flex: 1;
+        min-width: 0;
+        font-weight: 600;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+
+      .qname::-webkit-scrollbar {
+        display: none;
+      }
+
+      .qbody {
+        padding: 14px;
+        position: relative;
+      }
+
+      .sql-container {
+        position: relative;
+      }
+
+      .sql {
+        font-family: var(--mono);
+        white-space: pre;
+        color: var(--ink-secondary);
+        font-size: 13px;
+        padding: 16px 18px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--bg-secondary);
+        overflow-x: auto;
+        min-height: 60px;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+
+      .sql::-webkit-scrollbar {
+        display: none;
+      }
+
+      .sql-copy-btn {
+        position: absolute;
+        top: 14px;
+        right: 14px;
+      }
+
+      .additional-queries {
+        margin-top: 18px;
+        display: grid;
+        gap: 14px;
+      }
+
+      .simple-query {
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        background: var(--surface-2);
+        overflow: hidden;
+        transition: all 0.3s ease;
+      }
+
+      .simple-query:hover {
+        border-color: var(--accent);
+        box-shadow: 0 8px 24px rgba(255, 255, 255, 0.15);
+      }
+
+      .simple-query-head {
+        padding: 12px 16px;
+        background: linear-gradient(
+          to bottom,
+          var(--surface-elevated),
+          transparent
+        );
+        border-bottom: 1px solid var(--border);
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--ink);
+      }
+
+      .simple-query-body {
+        padding: 14px;
+        position: relative;
+      }
+
+      .specialty-check {
+        margin-top: 18px;
+        padding-top: 18px;
+        border-top: 1px solid var(--border);
+      }
+
+      .specialty-check-title {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--ink);
+        margin-bottom: 12px;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+      }
+
+      .two-col {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
+      .page-container {
+        display: none;
+      }
+      .page-container.active {
+        display: block;
+      }
+
+      .seed-page-wrapper {
+        max-width: 850px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+
+      .seed-header {
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        box-shadow:
+          var(--shadow),
+          inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        padding: 16px 20px;
+        margin-bottom: 24px;
+        border-radius: var(--radius-lg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+      }
+
+      .seed-header::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.15),
+          transparent
+        );
+      }
+
+      .seed-header .back-btn-small {
+        position: absolute;
+        left: 20px;
+      }
+
+      .seed-header h1 {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        text-align: center;
+        background: linear-gradient(135deg, #a0a0a0 0%, #c0c0c0 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .back-btn-small {
+        border: 1px solid #165016;
+        color: #fff;
+        background: linear-gradient(135deg, #1a5c1a 0%, #228b22 100%);
+        padding: 8px 16px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        font-size: 13px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      }
+
+      .back-btn-small:hover {
+        border-color: var(--accent);
+        background: linear-gradient(
+          135deg,
+          var(--accent) 0%,
+          var(--accent-hover) 100%
+        );
+        box-shadow: 0 6px 20px rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+      }
+
+      .seed-container {
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius-lg);
+        box-shadow:
+          var(--shadow),
+          inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        padding: 28px;
+        position: relative;
+      }
+
+      .seed-container::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.15),
+          transparent
+        );
+      }
+
+      .seed-label {
+        display: block;
+        font-size: 12px;
+        color: var(--muted);
+        font-weight: 700;
+        margin-top: 18px;
+        margin-bottom: 8px;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+      }
+
+      .seed-select,
+      .seed-textarea {
+        background: var(--surface-2);
+        color: var(--ink);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 12px 14px;
+        font-size: 14px;
+        outline: none;
+        width: 100%;
+        transition: all 0.2s ease;
+      }
+
+      .seed-select:focus,
+      .seed-textarea:focus {
+        border-color: var(--accent);
+        background: var(--surface-elevated);
+        box-shadow:
+          0 0 0 3px rgba(255, 255, 255, 0.15),
+          0 4px 12px rgba(0, 0, 0, 0.4);
+        transform: translateY(-1px);
+      }
+
+      .seed-textarea {
+        resize: vertical;
+        font-family: var(--mono);
+      }
+
+      .seed-note {
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 8px;
+      }
+
+      .seed-btn {
+        border: 1px solid #165016;
+        color: #fff;
+        background: linear-gradient(135deg, #1a5c1a 0%, #228b22 100%);
+        padding: 14px 24px;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        font-size: 14px;
+        margin-top: 24px;
+        width: 100%;
+        transition: all 0.2s ease;
+        box-shadow: 0 6px 20px rgba(255, 255, 255, 0.25);
+        text-transform: uppercase;
+      }
+
+      .seed-btn:hover {
+        box-shadow: 0 8px 28px rgba(255, 255, 255, 0.35);
+        transform: translateY(-2px);
+      }
+
+      .seed-output {
+        margin-top: 24px;
+        text-align: center;
+      }
+
+      .seed-download-link {
+        display: inline-block;
+        padding: 14px 32px;
+        background: linear-gradient(135deg, var(--ok) 0%, #2ec77a 100%);
+        color: white;
+        text-decoration: none;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 14px;
+        letter-spacing: 0.3px;
+        box-shadow: 0 6px 20px rgba(61, 214, 140, 0.4);
+        transition: all 0.2s ease;
+        text-transform: uppercase;
+      }
+
+      .seed-download-link:hover {
+        box-shadow: 0 8px 28px rgba(61, 214, 140, 0.6);
+        transform: translateY(-2px);
+      }
+
+      @media (max-width: 1120px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+        .caps {
+          grid-template-columns: 1fr;
+        }
+        .two-col {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1 class="mainHeading">Campaign Builder</h1>
+      <p class="subHeading">Generate campaign names and SQL queries.</p>
+    </header>
+
+    <div id="mainPage" class="page-container active">
+      <main>
+        <div class="wrap">
+          <div class="grid">
+            <section class="card">
+              <h2>Inputs</h2>
+              <div class="body">
+                <div class="form">
+                  <div class="field">
+                    <label for="run" class="coral-label">Run Number</label>
+                    <input
+                      id="run"
+                      class="input"
+                      placeholder="0007"
+                      maxlength="8"
+                    />
+                    <div class="hint">Auto‑pads to 4 digits.</div>
+                  </div>
+                  <div class="field">
+                    <label for="market" class="coral-label"
+                      >Market (Country)</label
+                    >
+                    <select id="market" class="input">
+                      <option value="">Select Country</option>
+                      <option value="DZ">Algeria</option>
+                      <option value="AR">Argentina</option>
+                      <option value="BY">Belarus</option>
+                      <option value="BR">Brazil</option>
+                      <option value="CL">Chile</option>
+                      <option value="CO">Colombia</option>
+                      <option value="CR">Costa Rica</option>
+                      <option value="DO">Dominican Republic</option>
+                      <option value="EC">Ecuador</option>
+                      <option value="EG">Egypt</option>
+                      <option value="SV">El Salvador</option>
+                      <option value="XG">Gulf</option>
+                      <option value="GT">Guatemala</option>
+                      <option value="IN">India</option>
+                      <option value="ID">Indonesia</option>
+                      <option value="JM">Jamaica</option>
+                      <option value="JO">Jordan</option>
+                      <option value="KZ">Kazakhstan</option>
+                      <option value="KE">Kenya</option>
+                      <option value="LB">Lebanon</option>
+                      <option value="MY">Malaysia</option>
+                      <option value="MX">Mexico</option>
+                      <option value="MA">Morocco</option>
+                      <option value="NG">Nigeria</option>
+                      <option value="PK">Pakistan</option>
+                      <option value="PA">Panama</option>
+                      <option value="PE">Peru</option>
+                      <option value="PH">Philippines</option>
+                      <option value="RU">Russia</option>
+                      <option value="SA">Saudi Arabia</option>
+                      <option value="LK">Sri Lanka</option>
+                      <option value="TH">Thailand</option>
+                      <option value="TT">Trinidad and Tobago</option>
+                      <option value="TN">Tunisia</option>
+                      <option value="TR">Turkey</option>
+                      <option value="UA">Ukraine</option>
+                      <option value="UY">Uruguay</option>
+                      <option value="VN">Vietnam</option>
+                      <option value="VE">Venezuela</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label for="date" class="coral-label">Send-out Date</label>
+                    <input id="date" type="date" class="input" />
+                    <div class="hint">DDMMYYYY in names.</div>
+                  </div>
+                  <div class="field">
+                    <label for="brand" class="coral-label">Brand</label>
+                    <input
+                      id="brand"
+                      class="input"
+                      placeholder="AREXVY"
+                      maxlength="40"
+                    />
+                  </div>
+                  <div class="field">
+                    <label for="filetype" class="coral-label">File Type</label>
+                    <select id="filetype" class="input">
+                      <option value="SP">Speciality (SP)</option>
+                      <option value="FF">Flatfile (FF)</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label for="clid" class="coral-label">CLID</label>
+                    <input
+                      id="clid"
+                      class="input"
+                      placeholder="PM-TH-RSA-EML-250009"
+                      maxlength="80"
+                    />
+                  </div>
+                  <div class="field">
+                    <label for="ss" class="coral-label">SS (Optional)</label>
+                    <input
+                      id="ss"
+                      class="input"
+                      placeholder="e.g., 219"
+                      maxlength="40"
+                    />
+                  </div>
+                </div>
+
+                <div
+                  id="specialtyRow"
+                  class="field"
+                  style="margin-top: 10px; display: none"
+                >
+                  <label for="specialty" class="coral-label"
+                    >Specialty CSV (SP)</label
+                  >
+                  <input
+                    id="specialty"
+                    class="input"
+                    placeholder="Cardiology,Diabetes,Nephrology"
+                  />
+                </div>
+
+                <div
+                  id="ffJoinRow"
+                  class="two-col"
+                  style="margin-top: 10px; display: none"
+                >
+                  <div class="field">
+                    <label for="ffJoinKey">Flatfile Join Key (FF)</label>
+                    <select id="ffJoinKey" class="input">
+                      <option value="VeevaID">VeevaID</option>
+                      <option value="MDMID">MDMID</option>
+                      <option value="Email">Email</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="row-buttons">
+                  <button id="build" class="btn">Build</button>
+                  <button id="clear" class="btn">Clear</button>
+                  <button id="copyAll" class="btn">Copy All</button>
+                </div>
+
+                <div class="specialty-check">
+                  <div class="specialty-check-title coral-label">
+                    Specialty Check
+                  </div>
+                  <div class="sql-container">
+                    <div id="specialtyCheckSql" class="sql"></div>
+                    <button
+                      class="icon-btn copy sql-copy-btn"
+                      data-target="specialtyCheckSql"
+                      title="Copy query"
+                    >
+                      <svg class="glyph" viewBox="0 0 24 24">
+                        <path
+                          d="M16 1H4c-1.1 0-2 .9-2 2v12h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2z"
+                        />
+                      </svg>
+                      <svg
+                        class="tick"
+                        viewBox="0 0 24 24"
+                        width="18"
+                        height="18"
+                      >
+                        <path
+                          d="M9 16.2l-3.5-3.5-1.4 1.4L9 19 20 8l-1.4-1.4z"
+                          fill="currentColor"
+                        />
+                      </svg>
+                    </button>
+
+                    <div
+                      style="
+                        margin-top: 16px;
+                        padding-top: 16px;
+                        border-top: 1px solid var(--border);
+                      "
+                    >
+                      <button
+                        class="btn"
+                        id="seedListBtn"
+                        style="width: 100%"
+                        onclick="showSeedPage()"
+                      >
+                        Seed List Generator
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="card">
+              <h2>Output</h2>
+              <div class="body">
+                <div class="caps" style="margin-bottom: 10px">
+                  <div id="flatfileNameCap" class="cap" style="display: none">
+                    <div class="label coral-label">FlatFile Name</div>
+                    <div class="value-row">
+                      <div id="flatfileName" class="value">—</div>
+                      <button
+                        class="icon-btn copy"
+                        data-target="flatfileName"
+                        title="Copy"
+                      >
+                        <svg class="glyph" viewBox="0 0 24 24">
+                          <path
+                            d="M16 1H4c-1.1 0-2 .9-2 2v12h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2z"
+                          />
+                        </svg>
+                        <svg
+                          class="tick"
+                          viewBox="0 0 24 24"
+                          width="18"
+                          height="18"
+                        >
+                          <path
+                            d="M9 16.2l-3.5-3.5-1.4 1.4L9 19 20 8l-1.4-1.4z"
+                            fill="currentColor"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="cap">
+                    <div class="label coral-label">Email Template Name</div>
+                    <div class="value-row">
+                      <div id="emailName" class="value">—</div>
+                      <button
+                        class="icon-btn copy"
+                        data-target="emailName"
+                        title="Copy"
+                      >
+                        <svg class="glyph" viewBox="0 0 24 24">
+                          <path
+                            d="M16 1H4c-1.1 0-2 .9-2 2v12h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2z"
+                          />
+                        </svg>
+                        <svg
+                          class="tick"
+                          viewBox="0 0 24 24"
+                          width="18"
+                          height="18"
+                        >
+                          <path
+                            d="M9 16.2l-3.5-3.5-1.4 1.4L9 19 20 8l-1.4-1.4z"
+                            fill="currentColor"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="cap">
+                    <div class="label coral-label">DE Name</div>
+                    <div class="value-row">
+                      <div id="deName" class="value">—</div>
+                      <button
+                        class="icon-btn copy"
+                        data-target="deName"
+                        title="Copy"
+                      >
+                        <svg class="glyph" viewBox="0 0 24 24">
+                          <path
+                            d="M16 1H4c-1.1 0-2 .9-2 2v12h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2z"
+                          />
+                        </svg>
+                        <svg
+                          class="tick"
+                          viewBox="0 0 24 24"
+                          width="18"
+                          height="18"
+                        >
+                          <path
+                            d="M9 16.2l-3.5-3.5-1.4 1.4L9 19 20 8l-1.4-1.4z"
+                            fill="currentColor"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="cap">
+                    <div class="label coral-label">Automation Name</div>
+                    <div class="value-row">
+                      <div id="autoName" class="value">—</div>
+                      <button
+                        class="icon-btn copy"
+                        data-target="autoName"
+                        title="Copy"
+                      >
+                        <svg class="glyph" viewBox="0 0 24 24">
+                          <path
+                            d="M16 1H4c-1.1 0-2 .9-2 2v12h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2z"
+                          />
+                        </svg>
+                        <svg
+                          class="tick"
+                          viewBox="0 0 24 24"
+                          width="18"
+                          height="18"
+                        >
+                          <path
+                            d="M9 16.2l-3.5-3.5-1.4 1.4L9 19 20 8l-1.4-1.4z"
+                            fill="currentColor"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="cap">
+                    <div class="label coral-label">Journey Name</div>
+                    <div class="value-row">
+                      <div id="journeyName" class="value">—</div>
+                      <button
+                        class="icon-btn copy"
+                        data-target="journeyName"
+                        title="Copy"
+                      >
+                        <svg class="glyph" viewBox="0 0 24 24">
+                          <path
+                            d="M16 1H4c-1.1 0-2 .9-2 2v12h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2z"
+                          />
+                        </svg>
+                        <svg
+                          class="tick"
+                          viewBox="0 0 24 24"
+                          width="18"
+                          height="18"
+                        >
+                          <path
+                            d="M9 16.2l-3.5-3.5-1.4 1.4L9 19 20 8l-1.4-1.4z"
+                            fill="currentColor"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="queries">
+                  <div class="q">
+                    <div class="qhead">
+                      <div class="qtitle">
+                        <span class="qbubble coral-label">Q1</span>
+                        <div class="qname-container">
+                          <span id="q1name" class="qname">—</span>
+                          <button
+                            class="icon-btn copy"
+                            data-target="q1name"
+                            title="Copy name"
+                          >
+                            <svg class="glyph" viewBox="0 0 24 24">
+                              <path
+                                d="M16 1H4c-1.1 0-2 .9-2 2v12h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2z"
+                              />
+                            </svg>
+                            <svg
+                              class="tick"
+                              viewBox="0 0 24 24"
+                              width="18"
+                              height="18"
+                            >
+                              <path
+                                d="M9 16.2l-3.5-3.5-1.4 1.4L9 19 20 8l-1.4-1.4z"
+                                fill="currentColor"
+                              />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="qbody">
+                      <div class="sql-container">
+                        <div id="q1sql" class="sql">—</div>
+                        <button
+                          class="icon-btn copy sql-copy-btn"
+                          data-target="q1sql"
+                          title="Copy query"
+                        >
+                          <svg class="glyph" viewBox="0 0 24 24">
+                            <path
+                              d="M16 1H4c-1.1 0-2 .9-2 2v12h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2z"
+                            />
+                          </svg>
+                          <svg
+                            class="tick"
+                            viewBox="0 0 24 24"
+                            width="18"
+                            height="18"
+                          >
+                            <path
+                              d="M9 16.2l-3.5-3.5-1.4 1.4L9 19 20 8l-1.4-1.4z"
+                              fill="currentColor"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="q">
+                    <div class="qhead">
+                      <div class="qtitle">
+                        <span class="qbubble coral-label">Q2</span>
+                        <div class="qname-container">
+                          <span id="q2name" class="qname">—</span>
+                          <button
+                            class="icon-btn copy"
+                            data-target="q2name"
+                            title="Copy name"
+                          >
+                            <svg class="glyph" viewBox="0 0 24 24">
+                              <path
+                                d="M16 1H4c-1.1 0-2 .9-2 2v12h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2z"
+                              />
+                            </svg>
+                            <svg
+                              class="tick"
+                              viewBox="0 0 24 24"
+                              width="18"
+                              height="18"
+                            >
+                              <path
+                                d="M9 16.2l-3.5-3.5-1.4 1.4L9 19 20 8l-1.4-1.4z"
+                                fill="currentColor"
+                              />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="qbody">
+                      <div class="sql-container">
+                        <div id="q2sql" class="sql">—</div>
+                        <button
+                          class="icon-btn copy sql-copy-btn"
+                          data-target="q2sql"
+                          title="Copy query"
+                        >
+                          <svg class="glyph" viewBox="0 0 24 24">
+                            <path
+                              d="M16 1H4c-1.1 0-2 .9-2 2v12h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2z"
+                            />
+                          </svg>
+                          <svg
+                            class="tick"
+                            viewBox="0 0 24 24"
+                            width="18"
+                            height="18"
+                          >
+                            <path
+                              d="M9 16.2l-3.5-3.5-1.4 1.4L9 19 20 8l-1.4-1.4z"
+                              fill="currentColor"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="q">
+                    <div class="qhead">
+                      <div class="qtitle">
+                        <span class="qbubble coral-label">Q3</span>
+                        <div class="qname-container">
+                          <span id="q3name" class="qname">—</span>
+                          <button
+                            class="icon-btn copy"
+                            data-target="q3name"
+                            title="Copy name"
+                          >
+                            <svg class="glyph" viewBox="0 0 24 24">
+                              <path
+                                d="M16 1H4c-1.1 0-2 .9-2 2v12h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2z"
+                              />
+                            </svg>
+                            <svg
+                              class="tick"
+                              viewBox="0 0 24 24"
+                              width="18"
+                              height="18"
+                            >
+                              <path
+                                d="M9 16.2l-3.5-3.5-1.4 1.4L9 19 20 8l-1.4-1.4z"
+                                fill="currentColor"
+                              />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="qbody">
+                      <div class="sql-container">
+                        <div id="q3sql" class="sql">—</div>
+                        <button
+                          class="icon-btn copy sql-copy-btn"
+                          data-target="q3sql"
+                          title="Copy query"
+                        >
+                          <svg class="glyph" viewBox="0 0 24 24">
+                            <path
+                              d="M16 1H4c-1.1 0-2 .9-2 2v12h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2z"
+                            />
+                          </svg>
+                          <svg
+                            class="tick"
+                            viewBox="0 0 24 24"
+                            width="18"
+                            height="18"
+                          >
+                            <path
+                              d="M9 16.2l-3.5-3.5-1.4 1.4L9 19 20 8l-1.4-1.4z"
+                              fill="currentColor"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="additional-queries">
+                  <div class="simple-query">
+                    <div class="simple-query-head coral-label">
+                      Eligible Count
+                    </div>
+                    <div class="simple-query-body">
+                      <div class="sql-container">
+                        <div id="eligibleCountSql" class="sql">—</div>
+                        <button
+                          class="icon-btn copy sql-copy-btn"
+                          data-target="eligibleCountSql"
+                          title="Copy query"
+                        >
+                          <svg class="glyph" viewBox="0 0 24 24">
+                            <path
+                              d="M16 1H4c-1.1 0-2 .9-2 2v12h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2z"
+                            />
+                          </svg>
+                          <svg
+                            class="tick"
+                            viewBox="0 0 24 24"
+                            width="18"
+                            height="18"
+                          >
+                            <path
+                              d="M9 16.2l-3.5-3.5-1.4 1.4L9 19 20 8l-1.4-1.4z"
+                              fill="currentColor"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="simple-query">
+                    <div class="simple-query-head coral-label">
+                      FinalCount_By_Specialty
+                    </div>
+                    <div class="simple-query-body">
+                      <div class="sql-container">
+                        <div id="finalCountSql" class="sql">—</div>
+                        <button
+                          class="icon-btn copy sql-copy-btn"
+                          data-target="finalCountSql"
+                          title="Copy query"
+                        >
+                          <svg class="glyph" viewBox="0 0 24 24">
+                            <path
+                              d="M16 1H4c-1.1 0-2 .9-2 2v12h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2z"
+                            />
+                          </svg>
+                          <svg
+                            class="tick"
+                            viewBox="0 0 24 24"
+                            width="18"
+                            height="18"
+                          >
+                            <path
+                              d="M9 16.2l-3.5-3.5-1.4 1.4L9 19 20 8l-1.4-1.4z"
+                              fill="currentColor"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </main>
+    </div>
+    <div id="seedPage" class="page-container">
+      <div class="seed-page-wrapper">
+        <div class="seed-header">
+          <button class="back-btn-small" onclick="showMainPage()">
+            ← Back
+          </button>
+          <h1>SEED List CSV Generator</h1>
+        </div>
+
+        <div class="seed-container">
+          <label class="seed-label" for="seedCountry">Select Country</label>
+          <select id="seedCountry" class="seed-select">
+            <option value="DZ">Algeria</option>
+            <option value="AR">Argentina</option>
+            <option value="BY">Belarus</option>
+            <option value="BR">Brazil</option>
+            <option value="CL">Chile</option>
+            <option value="CO">Colombia</option>
+            <option value="CR">Costa Rica</option>
+            <option value="DO">Dominican Republic</option>
+            <option value="EC">Ecuador</option>
+            <option value="EG">Egypt</option>
+            <option value="SV">El Salvador</option>
+            <option value="XG">Gulf</option>
+            <option value="GT">Guatemala</option>
+            <option value="IN">India</option>
+            <option value="ID">Indonesia</option>
+            <option value="JM">Jamaica</option>
+            <option value="JO">Jordan</option>
+            <option value="KZ">Kazakhstan</option>
+            <option value="KE">Kenya</option>
+            <option value="LB">Lebanon</option>
+            <option value="MY">Malaysia</option>
+            <option value="MX">Mexico</option>
+            <option value="MA">Morocco</option>
+            <option value="NG">Nigeria</option>
+            <option value="PK">Pakistan</option>
+            <option value="PA">Panama</option>
+            <option value="PE">Peru</option>
+            <option value="PH">Philippines</option>
+            <option value="RU">Russia</option>
+            <option value="SA">Saudi Arabia</option>
+            <option value="LK">Sri Lanka</option>
+            <option value="TH">Thailand</option>
+            <option value="TT">Trinidad and Tobago</option>
+            <option value="TN">Tunisia</option>
+            <option value="TR">Turkey</option>
+            <option value="UA">Ukraine</option>
+            <option value="UY">Uruguay</option>
+            <option value="VN">Vietnam</option>
+            <option value="VE">Venezuela</option>
+          </select>
+
+          <label class="seed-label" for="seedEmails">Enter Email IDs</label>
+          <textarea
+            id="seedEmails"
+            class="seed-textarea"
+            rows="6"
+            placeholder="One email per line (e.g., john.d.doe@example.com)"
+          ></textarea>
+          <div class="seed-note">
+            Note: Enter emails line-by-line or comma-separated.
+          </div>
+
+          <button class="seed-btn" onclick="generateSeedCSV()">
+            Generate CSV
+          </button>
+
+          <div id="seedOutput" class="seed-output">
+            <a
+              id="seedDownloadLink"
+              class="seed-download-link"
+              style="display: none"
+              >Download CSV</a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function pad2(n) {
+        return String(n).padStart(2, "0");
+      }
+      function pad4(n) {
+        const raw = (n ?? "").toString().trim();
+        if (!raw) return "";
+        if (/^\d+$/.test(raw)) return raw.padStart(4, "0");
+        const m = raw.match(/^(\d+)([A-Za-z].*)$/);
+        if (m)
+          return (
+            m[1].padStart(4, "0") +
+            m[2].toUpperCase().replace(/[^A-Z0-9_\-]/g, "")
+          );
+        return raw.toUpperCase().replace(/[^A-Z0-9_\-]/g, "");
+      }
+      function formatDateDDMMYYYY(iso) {
+        if (!iso) return "";
+        const d = new Date(iso + "T00:00:00");
+        if (isNaN(d.getTime())) return "";
+        return pad2(d.getDate()) + pad2(d.getMonth() + 1) + d.getFullYear();
+      }
+      function sanitizeCore(s, upcase = true) {
+        if (!s) return "";
+        let out = s.trim().replace(/\s+/g, "_");
+        out = out.replace(/[^A-Za-z0-9_\-]/g, "");
+        return upcase ? out.toUpperCase() : out;
+      }
+
+      const filetypeEl = document.getElementById("filetype");
+      const specialtyRow = document.getElementById("specialtyRow");
+      const ffJoinRow = document.getElementById("ffJoinRow");
+      const marketInput = document.getElementById("market");
+
+      function refreshRows() {
+        const flatfileNameCap = document.getElementById("flatfileNameCap");
+        if (filetypeEl.value === "SP") {
+          specialtyRow.style.display = "";
+          ffJoinRow.style.display = "none";
+          flatfileNameCap.style.display = "none";
+        } else {
+          specialtyRow.style.display = "none";
+          ffJoinRow.style.display = "";
+          flatfileNameCap.style.display = "";
+        }
+      }
+      filetypeEl.addEventListener("change", refreshRows);
+      document.addEventListener("DOMContentLoaded", initializeCampaignBuilder);
+
+      function initializeCampaignBuilder() {
+        refreshRows();
+        setText("specialtyCheckSql", specialtyCheckSqlDefault());
+      }
+
+      marketInput.addEventListener("input", function () {
+        const market = this.value.trim();
+        if (market) {
+          setText("specialtyCheckSql", specialtyCheckSql(market));
+        } else {
+          setText("specialtyCheckSql", specialtyCheckSqlDefault());
+        }
+      });
+
+      function buildQ1InListLines(csv) {
+        const items = (csv || "")
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean)
+          .map((s) => "'" + s.replace(/'/g, "''") + "'");
+        const list = items.length ? items : ["'Specialty1'", "'Specialty2'"];
+        const lines = list.map(
+          (val, i) => val + (i === list.length - 1 ? "" : ","),
+        );
+        return "(\n" + lines.join("\n") + "\n)";
+      }
+
+      function q1SqlSP(market, csv) {
+        const inList = buildQ1InListLines(csv);
+        return (
+          "Select\n" +
+          "B.MDMID, B.Email, B.EmailToken, B.Title, B.FirstName, B.MiddleName, B.LastName, B.Gender, B.Profession, B.Specialty, B.OptOutURL, B.SourceID, B.VeevaID, B.ConsentCaptureDateUTC, B.Status, B.CrmStatus\n" +
+          "FROM ENT." +
+          market +
+          "_P_ProfilesAndEmailsOptIn B\n" +
+          "WHERE Specialty in " +
+          inList +
+          "\n" +
+          "AND B.CrmStatus = 'Active'\n" +
+          "AND B.MDMID LIKE 'HCP%'\n"
+        );
+      }
+      function q1SqlFF(market, deName, flatfileName, joinKey) {
+        // Added flatfileName as an argument
+        const key =
+          { VeevaID: "VeevaID", MDMID: "MDMID", Email: "Email" }[joinKey] ||
+          "VeevaID";
+        return (
+          "Select B.MDMID, B.Email, B.EmailToken, B.Title, B.FirstName, B.MiddleName, B.LastName, B.Gender,B.Profession, B.Specialty, B.OptOutURL, B.SourceID, B.VeevaID, B.ConsentCaptureDateUTC, B.Status\n" +
+          "From ENT." +
+          market +
+          "_P_ProfilesAndEmailsOptIn B inner join " +
+          flatfileName +
+          " A on B." +
+          key +
+          " = A." +
+          key +
+          "\n" + // Replaced deName with flatfileName here
+          "Where B.Crmstatus = 'Active' AND B.MDMID LIKE 'HCP%'\n"
+        );
+      }
+      function q2SqlSP(deName) {
+        return (
+          "Select MDMID, Email, EmailToken, Title, FirstName, MiddleName, LastName, Gender, Profession, Specialty, OptOutURL, SourceID, VeevaID, ConsentCaptureDateUTC, 'Latest' AS Status\n" +
+          "From\n" +
+          "(Select MDMID, Email, EmailToken, Title, FirstName, MiddleName, LastName, Gender, Profession, Specialty, OptOutURL, SourceID, VeevaID, ConsentCaptureDateUTC, Status, ROW_NUMBER() OVER \n" +
+          "\t(\n" +
+          "\t\tPARTITION BY MDMID\n" +
+          "\t    Order by ConsentCaptureDateUTC DESC\n" +
+          "\t) AS RN\n" +
+          "  From " +
+          deName +
+          ") A\n" +
+          "Where RN = 1"
+        );
+      }
+      function q3SqlSP(deName) {
+        return (
+          "Select MDMID, Email, EmailToken, Title, FirstName, MiddleName, LastName, Gender, Profession, Specialty, OptOutURL, SourceID, VeevaID, ConsentCaptureDateUTC, 'Eligible' AS Status\n" +
+          "From\n" +
+          "(Select MDMID, Email, EmailToken, Title, FirstName, MiddleName, LastName, Gender, Profession, Specialty, OptOutURL, SourceID, VeevaID, ConsentCaptureDateUTC, Status, ROW_NUMBER() OVER \n" +
+          "\t(\n" +
+          "\t\tPARTITION BY Email\n" +
+          "\t   Order by ConsentCaptureDateUTC DESC\n" +
+          "\t) AS RN\n" +
+          "From " +
+          deName +
+          "\n" +
+          "Where Status = 'Latest') A\n" +
+          "Where RN = 1"
+        );
+      }
+      function q2SqlFF(deName) {
+        return (
+          "Select MDMID, Email, EmailToken, Title, FirstName, MiddleName, LastName, Gender, Profession, Specialty, OptOutURL, SourceID, VeevaID, ConsentCaptureDateUTC, 'Latest' AS Status \n" +
+          "From \n" +
+          "( \n" +
+          "Select MDMID, Email,  EmailToken,   Title,   FirstName,  MiddleName,   LastName,   Gender,  Profession,   Specialty, OptOutURL,   SourceID,   VeevaID,  ConsentCaptureDateUTC, Status, ROW_NUMBER() OVER  \n" +
+          "     ( \n" +
+          "\t\tPARTITION BY MDMID \n" +
+          "\t\tOrder by ConsentCaptureDateUTC DESC \n" +
+          "      ) AS RN  \n" +
+          "From " +
+          deName +
+          " ) A \n" +
+          "Where RN = 1"
+        );
+      }
+      function q3SqlFF(deName) {
+        return (
+          "Select MDMID,   Email,  EmailToken,   Title,   FirstName,  MiddleName,   LastName,   Gender,  Profession,   Specialty, OptOutURL,   SourceID,   VeevaID,  ConsentCaptureDateUTC, 'Eligible' AS Status\n" +
+          "From\n" +
+          "(\n" +
+          "Select MDMID, Email, EmailToken, Title, FirstName, MiddleName, LastName, Gender,  Profession,   Specialty, OptOutURL, SourceID, VeevaID, ConsentCaptureDateUTC,   Status,    ROW_NUMBER () OVER \n" +
+          "     (\n" +
+          "\t\tPARTITION BY Email \n" +
+          "\t\tOrder by ConsentCaptureDateUTC DESC\n" +
+          "      ) AS RN \n" +
+          "From " +
+          deName +
+          "\n" +
+          "Where Status = 'Latest') A \n" +
+          "Where RN = 1"
+        );
+      }
+
+      function eligibleCountSql(deName) {
+        return (
+          "SELECT\n" +
+          "COUNT(ISNULL(Status,'NoSpecialtyUsers')) as Count,\n" +
+          "Status\n" +
+          "FROM " +
+          deName +
+          "\n" +
+          "GROUP BY Status"
+        );
+      }
+
+      function finalCountBySpecialtySql(deName) {
+        return (
+          "SELECT\n" +
+          "COUNT(ISNULL(Specialty,'NoSpecialtyUsers')) as Count,\n" +
+          "Specialty\n" +
+          "FROM " +
+          deName +
+          "\n" +
+          "WHERE Status='Eligible'\n" +
+          "GROUP BY Specialty"
+        );
+      }
+
+      function specialtyCheckSqlDefault() {
+        return (
+          "SELECT\n" +
+          "COUNT(ISNULL(Status,'NoSpecialtyUsers')) as Count,\n" +
+          "Specialty\n" +
+          "FROM\n" +
+          "ENT.{{Market}}_P_ProfilesAndEmailsOptIn\n" +
+          "GROUP BY Specialty"
+        );
+      }
+
+      function specialtyCheckSql(market) {
+        return (
+          "SELECT\n" +
+          "COUNT(ISNULL(Status,'NoSpecialtyUsers')) as Count,\n" +
+          "Specialty\n" +
+          "FROM\n" +
+          "ENT." +
+          market +
+          "_P_ProfilesAndEmailsOptIn\n" +
+          "GROUP BY Specialty"
+        );
+      }
+
+      function setText(id, text) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.textContent = text || "—";
+      }
+
+      function buildAll() {
+        const run = pad4(document.getElementById("run").value);
+        const market = document.getElementById("market").value.trim();
+        const brand = sanitizeCore(document.getElementById("brand").value);
+        const clid = sanitizeCore(
+          document.getElementById("clid").value.trim(),
+          true,
+        );
+        const filetype = document.getElementById("filetype").value;
+        const sendDate = formatDateDDMMYYYY(
+          document.getElementById("date").value,
+        );
+        const ss = sanitizeCore(document.getElementById("ss").value, true);
+
+        const missing = [];
+        if (!run) missing.push("Run Number");
+        if (!market) missing.push("Market");
+        if (!sendDate) missing.push("Send-out Date");
+        if (!brand) missing.push("Brand");
+        if (!filetype) missing.push("File Type");
+        if (!clid) missing.push("CLID");
+        if (missing.length) {
+          alert("Please fill: " + missing.join(", "));
+          return;
+        }
+
+        const ssSuffix = ss ? `_SS${ss}` : "";
+
+        const base = `HS_SS_${run}_P_${market}_${sendDate}_${brand}`;
+        const emailTemplate = `HS_SS_P_${market}_${sendDate}_${brand}_${clid}${ssSuffix}_Launch`;
+        const deName = `${base}_${filetype}${ssSuffix}`;
+        const journey = `${base}_${clid}${ssSuffix}`;
+        const q1Name = `${base}_Q1`;
+        const q2Name = `${base}_Q2`;
+        const q3Name = `${base}_Q3`;
+        let flatfileNameValue = "";
+        const flatfileNameCap = document.getElementById("flatfileNameCap");
+        if (filetype === "FF") {
+          let rawFlatfileName = `${clid}_${sendDate}_FF`;
+          flatfileNameValue = rawFlatfileName.replace(/-/g, "_"); // Replace all hyphens with underscores
+          setText("flatfileName", flatfileNameValue);
+          flatfileNameCap.style.display = "";
+        } else {
+          setText("flatfileName", "—");
+          flatfileNameCap.style.display = "none";
+        }
+
+        setText("emailName", emailTemplate);
+        setText("deName", deName);
+        setText("autoName", base);
+        setText("journeyName", journey);
+
+        setText("q1name", q1Name);
+        setText("q2name", q2Name);
+        setText("q3name", q3Name);
+
+        let q1Sql = "",
+          q2Sql = "",
+          q3Sql = "";
+        if (filetype === "SP") {
+          const specialtiesCsv = (
+            document.getElementById("specialty").value || ""
+          ).trim();
+          q1Sql = q1SqlSP(market, specialtiesCsv);
+          q2Sql = q2SqlSP(deName);
+          q3Sql = q3SqlSP(deName);
+        } else {
+          const joinKey = document.getElementById("ffJoinKey").value;
+          q1Sql = q1SqlFF(market, deName, flatfileNameValue, joinKey);
+          q2Sql = q2SqlFF(deName);
+          q3Sql = q3SqlFF(deName);
+        }
+
+        setText("q1sql", q1Sql);
+        setText("q2sql", q2Sql);
+        setText("q3sql", q3Sql);
+
+        setText("eligibleCountSql", eligibleCountSql(deName));
+        setText("finalCountSql", finalCountBySpecialtySql(deName));
+        setText("specialtyCheckSql", specialtyCheckSql(market));
+      }
+
+      function clearAll() {
+        ["run", "market", "date", "brand", "clid", "ss"].forEach(
+          (id) => (document.getElementById(id).value = ""),
+        );
+        document.getElementById("filetype").value = "SP";
+        refreshRows();
+        const spec = document.getElementById("specialty");
+        if (spec) spec.value = "";
+        const join = document.getElementById("ffJoinKey");
+        if (join) join.value = "VeevaID";
+
+        [
+          "flatfileName",
+          "emailName",
+          "deName",
+          "autoName",
+          "journeyName",
+          "q1name",
+          "q2name",
+          "q3name",
+        ].forEach((id) => setText(id, "—"));
+        [
+          "q1sql",
+          "q2sql",
+          "q3sql",
+          "eligibleCountSql",
+          "finalCountSql",
+        ].forEach((id) => setText(id, "—"));
+        document.getElementById("flatfileNameCap").style.display = "none";
+
+        setText("specialtyCheckSql", specialtyCheckSqlDefault());
+      }
+
+      document.addEventListener("click", function (e) {
+        const btn = e.target.closest(".copy");
+        if (!btn) return;
+        const id = btn.getAttribute("data-target");
+        const el = document.getElementById(id);
+        if (!el) return;
+        const text = el.textContent;
+        if (!text || text.trim() === "—") return;
+        copyText(text, btn);
+      });
+
+      async function copyText(text, btn) {
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            await navigator.clipboard.writeText(text);
+          } else {
+            const ta = document.createElement("textarea");
+            ta.value = text;
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand("copy");
+            document.body.removeChild(ta);
+          }
+        } finally {
+          btn.classList.add("copied");
+          setTimeout(() => btn.classList.remove("copied"), 2000);
+        }
+      }
+
+      document.getElementById("build").addEventListener("click", buildAll);
+      document.getElementById("clear").addEventListener("click", clearAll);
+
+      document.getElementById("copyAll").addEventListener("click", function () {
+        const emailName = document
+          .getElementById("emailName")
+          .textContent.trim();
+        if (!emailName || emailName === "—") return;
+
+        const deName = document.getElementById("deName").textContent.trim();
+        const journeyName = document
+          .getElementById("journeyName")
+          .textContent.trim();
+        const autoName = document.getElementById("autoName").textContent.trim();
+        const q1name = document.getElementById("q1name").textContent.trim();
+        const q2name = document.getElementById("q2name").textContent.trim();
+        const q3name = document.getElementById("q3name").textContent.trim();
+
+        const payloadItems = [
+          "Email template name: " + emailName,
+          "DE Name: " + deName,
+          "Journey Name: " + journeyName,
+          "Automation Name: " + autoName,
+          "Query Names: " + q1name + ", " + q2name + ", " + q3name,
+        ];
+
+        const flatfileName = document
+          .getElementById("flatfileName")
+          .textContent.trim();
+        if (flatfileName && flatfileName !== "—") {
+          payloadItems.unshift("FlatFile Name: " + flatfileName);
+        }
+
+        const payload = payloadItems.join("\n");
+        copyText(payload, this);
+      });
+
+      function showSeedPage() {
+        document.getElementById("mainPage").classList.remove("active");
+        document.getElementById("seedPage").classList.add("active");
+        window.scrollTo(0, 0);
+      }
+
+      function showMainPage() {
+        document.getElementById("seedPage").classList.remove("active");
+        document.getElementById("mainPage").classList.add("active");
+        window.scrollTo(0, 0);
+      }
+
+      function cleanSeedName(name) {
+        return name.replace(/[^a-zA-Z]/g, "-");
+      }
+
+      function capitalizeSeed(str) {
+        return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+      }
+
+      function generateSeedCSV() {
+        const country = document.getElementById("seedCountry").value;
+        const domainMap = {
+          SA: "https://gskpro.com/en-sa/",
+          TH: "https://gskpro.com/th-th/",
+          IN: "https://gskpro.com/en-in/",
+          XG: "https://gskpro.com/en-xg/",
+          ID: "https://gskpro.com/id-id/",
+          MY: "https://gskpro.com/en-my/",
+          PK: "https://gskpro.com/en-pk/",
+          PE: "https://gskpro.com/es-pe/",
+          PH: "https://gskpro.com/en-ph/",
+          DZ: "https://gskpro.com/fr-dz",
+          EG: "https://gskpro.com/en-eg/",
+          TR: "https://gskpro.com/tr-tr/",
+          KE: "https://gskpro.com/en-ke/",
+        };
+        const optOutURL = domainMap[country] || "https://gskpro.com/";
+        const emailInput = document.getElementById("seedEmails").value?.trim();
+        if (!emailInput) {
+          alert("Please enter at least one email address");
+          return;
+        }
+        const rawEmails = emailInput
+          .split(/[\n,]/)
+          .map((e) => e.trim())
+          .filter((e) => e);
+        const header = [
+          "MDMID",
+          "VeevaID",
+          "Email",
+          "EmailToken",
+          "GskOrg",
+          "MarketID",
+          "DcfCode",
+          "CrmStatus",
+          "Title",
+          "FirstName",
+          "MiddleName",
+          "LastName",
+          "Gender",
+          "Profession",
+          "Specialty",
+          "Specialty2",
+          "PreferredLanguage",
+          "SourceModifiedDateUTC",
+          "SourceCreatedDateUTC",
+          "CreatedDate",
+          "UpdatedDate",
+          "SourceID",
+          "AccountType",
+          "IsVerified",
+          "OptOutURL",
+          "Status",
+          "ExpiryDateUTC",
+          "ConsentCaptureDateUTC",
+          "ChannelValueRank",
+          "EncodedEmailToken",
+          "Brand",
+        ];
+        let csvContent = header.join(",") + "\n";
+        rawEmails.forEach((email, index) => {
+          const localPart = email.split("@")[0];
+          const parts = localPart.split(/[_\.]/);
+          const cleanedParts = parts
+            .map((p) => cleanSeedName(p))
+            .filter((p) => p);
+          let firstName = "",
+            middleName = "",
+            lastName = "";
+          if (cleanedParts.length === 1) {
+            firstName = capitalizeSeed(cleanedParts[0]);
+          } else if (cleanedParts.length === 2) {
+            firstName = capitalizeSeed(cleanedParts[0]);
+            lastName = cleanedParts[1].toLowerCase();
+          } else if (cleanedParts.length >= 3) {
+            firstName = capitalizeSeed(cleanedParts[0]);
+            lastName = cleanedParts[cleanedParts.length - 1].toLowerCase();
+            for (let i = 1; i < cleanedParts.length - 1; i++) {
+              if (
+                cleanedParts[i].length >= 3 &&
+                /^[A-Za-z]+$/.test(cleanedParts[i])
+              ) {
+                middleName = capitalizeSeed(cleanedParts[i]);
+                break;
+              }
+            }
+          }
+          const id = String(index + 1).padStart(2, "0");
+          const baseId = `SL_Seed_Digital_${id}`;
+          const row = [
+            baseId,
+            "",
+            email,
+            baseId,
+            "",
+            country,
+            "",
+            "",
+            "",
+            firstName,
+            middleName,
+            lastName,
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            optOutURL,
+            "seed",
+            "",
+            "",
+            "",
+            "",
+            "",
+          ];
+          csvContent += row.join(",") + "\n";
+        });
+        const blob = new Blob([csvContent], { type: "text/csv" });
+        const link = document.getElementById("seedDownloadLink");
+        link.href = URL.createObjectURL(blob);
+        link.download = "Seed_List.csv";
+        link.style.display = "inline-block";
+        link.textContent = "Download CSV";
+      }
+    </script>
+  </body>
+</html>
