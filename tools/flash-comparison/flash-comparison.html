@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Flash Comparison Tool</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h1 class="mainHeading">Flash Comparison</h1>
+    <p class="subHeading">
+      Upload, Compare &amp; Flash Between PDF &amp; HTML Files
+    </p>
+
+    <div class="wrap">
+      <!-- Upload row -->
+      <div class="upload-row">
+        <!-- File A -->
+        <div class="drop-zone" id="zoneA">
+          <div class="dz-collapsed" id="collapsedA" style="display: none">
+            <span class="badge badge-a">A</span>
+            <span class="dz-collapsed-name" id="collapsedNameA"></span>
+            <span class="dz-collapsed-toggle" id="toggleA"
+              ><i class="ti ti-chevron-down"></i
+            ></span>
+          </div>
+          <div class="dz-expandable" id="expandableA">
+            <div class="dz-click-area" id="clickA">
+              <input type="file" id="fileA" accept=".pdf" />
+              <span class="badge badge-a">File A — PDF only</span>
+              <i class="ti ti-file-type-pdf"></i>
+              <div class="dz-sub">Click or drop a PDF</div>
+              <div class="dz-name" id="nameA"></div>
+            </div>
+            <div class="page-picker" id="pickerA">
+              <label for="pageSelA">Page</label>
+              <select id="pageSelA"></select>
+              <span class="total-pages" id="totalPagesA"></span>
+              <div class="crop-sliders">
+                <label
+                  >TB
+                  <input
+                    type="range"
+                    id="cropTBA"
+                    min="0"
+                    max="30"
+                    value="0"
+                  /><span id="cropTBAVal">0</span>px</label
+                >
+                <label
+                  >LR
+                  <input
+                    type="range"
+                    id="cropLRA"
+                    min="0"
+                    max="30"
+                    value="0"
+                  /><span id="cropLRAVal">0</span>px</label
+                >
+              </div>
+            </div>
+            <div class="err" id="errA"></div>
+          </div>
+        </div>
+
+        <!-- File B -->
+        <div class="drop-zone" id="zoneB">
+          <div class="dz-collapsed" id="collapsedB" style="display: none">
+            <span class="badge badge-b">B</span>
+            <span class="dz-collapsed-name" id="collapsedNameB"></span>
+            <span class="dz-collapsed-toggle" id="toggleB"
+              ><i class="ti ti-chevron-down"></i
+            ></span>
+          </div>
+          <div class="dz-expandable" id="expandableB">
+            <div class="dz-click-area" id="clickB">
+              <input type="file" id="fileB" accept=".pdf,.html,.htm" />
+              <span class="badge badge-b">File B — PDF or HTML</span>
+              <i class="ti ti-file-description"></i>
+              <div class="dz-sub">Click or drop a PDF or HTML file</div>
+              <div class="dz-name" id="nameB"></div>
+            </div>
+            <div class="page-picker" id="pickerB">
+              <label for="pageSelB">Page</label>
+              <select id="pageSelB"></select>
+              <span class="total-pages" id="totalPagesB"></span>
+              <div class="crop-sliders">
+                <label
+                  >TB
+                  <input
+                    type="range"
+                    id="cropTBB"
+                    min="0"
+                    max="30"
+                    value="0"
+                  /><span id="cropTBBVal">0</span>px</label
+                >
+                <label
+                  >LR
+                  <input
+                    type="range"
+                    id="cropLRB"
+                    min="0"
+                    max="30"
+                    value="0"
+                  /><span id="cropLRBVal">0</span>px</label
+                >
+              </div>
+            </div>
+            <div class="err" id="errB"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="controls">
+        <div class="ctrl-grp">
+          <label for="speedSlider">Speed</label>
+          <input
+            type="range"
+            id="speedSlider"
+            min="100"
+            max="2000"
+            step="50"
+            value="500"
+          />
+          <span id="speedVal">500ms</span>
+        </div>
+        <div class="btn-row">
+          <button class="btn primary" id="startBtn" disabled>
+            <i class="ti ti-player-play"></i> Start
+          </button>
+          <button class="btn stop" id="stopBtn" disabled>
+            <i class="ti ti-player-pause"></i> Stop
+          </button>
+          <button class="btn" id="resetBtn">
+            <i class="ti ti-refresh"></i> Reset
+          </button>
+        </div>
+      </div>
+
+      <!-- Canvas -->
+      <div class="canvas-wrap" id="canvasWrap">
+        <button
+          class="fullscreen-btn"
+          id="fullscreenBtn"
+          title="Toggle fullscreen"
+        >
+          <i class="ti ti-arrows-maximize" id="fullscreenIcon"></i>
+        </button>
+        <div class="placeholder" id="placeholder">
+          <i class="ti ti-files"></i>
+          <p>Upload both files above to begin</p>
+        </div>
+        <canvas id="flashCanvas"></canvas>
+      </div>
+
+      <!-- Status bar -->
+      <div class="status-bar">
+        <span class="dot" id="dot"></span>
+        <span class="show-lbl" id="showLbl"></span>
+        <span class="cycle-cnt" id="cycleCnt"></span>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

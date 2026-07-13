@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Journey Helper</title>
+
+    <link
+      rel="icon"
+      href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><text y="50" font-size="50">🫂</text></svg>'
+    />
+    <link rel="stylesheet" href="shared/shell.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <nav class="tool-nav" aria-label="Tool navigation">
+        <div class="tool-nav-brand">Journey Helper</div>
+        <div class="tool-nav-links">
+          <a
+            href="#campaign-builder"
+            class="tool-nav-link"
+            data-tool="campaign-builder"
+            >Campaign Builder</a
+          >
+          <a
+            href="#specialty-finder"
+            class="tool-nav-link"
+            data-tool="specialty-finder"
+            >Specialty Finder</a
+          >
+          <a
+            href="#flash-comparison"
+            class="tool-nav-link"
+            data-tool="flash-comparison"
+            >Flash Comparison</a
+          >
+        </div>
+      </nav>
+
+      <div class="workspace">
+        <iframe
+          id="frame-campaign-builder"
+          class="tool-frame"
+          data-tool="campaign-builder"
+          src="tools/campaign-builder/CampaignBuilder.html"
+          title="Campaign Builder"
+        ></iframe>
+
+        <iframe
+          id="frame-specialty-finder"
+          class="tool-frame"
+          data-tool="specialty-finder"
+          src="tools/specialty-finder/speciality-finder.html"
+          title="Specialty Finder"
+        ></iframe>
+
+        <iframe
+          id="frame-flash-comparison"
+          class="tool-frame"
+          data-tool="flash-comparison"
+          src="tools/flash-comparison/flash-comparison.html"
+          title="Flash Comparison"
+          allow="fullscreen"
+          allowfullscreen
+        ></iframe>
+      </div>
+    </div>
+
+    <script src="shared/shell.js"></script>
+  </body>
+</html>
