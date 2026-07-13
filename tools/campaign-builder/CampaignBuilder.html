@@ -514,56 +514,29 @@
         margin: 0;
         font-family: var(--sans);
         color: var(--ink);
-        background: linear-gradient(
-          135deg,
-          #000000 0%,
-          #0a0a0a 50%,
-          #050505 100%
-        );
-        background-attachment: fixed;
+        background-color: #e1dcc9;
         display: grid;
         grid-template-rows: auto 1fr;
         min-height: 100%;
       }
 
-      body::before {
-        content: "";
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background:
-          radial-gradient(
-            circle at 20% 50%,
-            rgba(255, 255, 255, 0.03) 0%,
-            transparent 50%
-          ),
-          radial-gradient(
-            circle at 80% 80%,
-            rgba(200, 200, 200, 0.03) 0%,
-            transparent 50%
-          );
-        pointer-events: none;
-        z-index: 0;
-      }
-
       .mainHeading {
         font-family: "Cinzel", serif;
-        font-size: 2.6rem;
+        font-size: 3rem;
         font-weight: 700;
-        letter-spacing: 2px;
+        letter-spacing: 4px;
         text-align: center;
         margin: 32px 0 0 0;
-        color: #c0c0c0;
+        color: #1f150c;
         position: relative;
         z-index: 1;
       }
 
       .subHeading {
-        color: var(--muted);
+        color: #412d15;
         font-size: 1rem;
         font-weight: 500;
+        letter-spacing: 2px;
         text-align: center;
         margin: 8px 0 28px 0;
         position: relative;
@@ -2448,7 +2421,7 @@
           .map((s) => s.trim())
           .filter(Boolean)
           .map((s) => "'" + s.replace(/'/g, "''") + "'");
-        const list = items.length ? items : ["'Specilty1'", "'Specilety2'"];
+        const list = items.length ? items : ["'Specialty1'", "'Specialty2'"];
         const lines = list.map(
           (val, i) => val + (i === list.length - 1 ? "" : ","),
         );
