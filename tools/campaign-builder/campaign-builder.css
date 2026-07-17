@@ -1,36 +1,13 @@
-:root {
-  /* Consolidated Theme Variables (Ivory & Espresso) */
-  --bg: #e1dcc9; /* Soft warm ivory canvas */
-  --surface: #ffffff; /* Pure white for card surfaces */
-  --surface-cream: #faf8f3; /* Light cream for inputs, inactive blocks, and headers */
-  --border-color: #412d15; /* Deep warm chocolate / espresso border */
-  --border: #412d15; /* Backward compatibility for inline styles */
-  --ink: #1f150c; /* Primary deep espresso text */
-  --ink-muted: #6a5945; /* Muted bronze-brown for labels, hints, and notes */
+/* ════════════════════════════════════════════════════════════
+   THEME TOKENS REQUIRED · "Ivory & Espresso"
+   ────────────────────────────────────────────────────────────
+   This stylesheet USES shared tokens but does NOT declare them.
+   In your tool's HTML, load the shared token file first:
 
-  /* Interactive Elements */
-  --primary-btn: #412d15; /* Deep espresso for buttons */
-  --primary-btn-hover: #1f150c; /* Darker espresso on button hover */
-  --success: #2e7d32; /* Rich forest green for copy ticks & CSV download button */
-  --success-hover: #256428; /* Darker forest green for hover states */
+     <link rel="stylesheet" href="../../shared/theme-tokens.css" />
 
-  /* Layout & Borders */
-  --border-thick: 2px solid var(--border-color);
-  --border-thin: 1px solid var(--border-color);
-  --border-dashed: 1px dashed var(--border-color);
-  --radius: 10px;
-  --radius-lg: 16px;
-  --shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-
-  /* Typography */
-  --sans:
-    "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --serif: "Cinzel", serif;
-  --mono:
-    ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
-
-  --container-max: 1080px;
-}
+   (Single source of truth: shared/theme-tokens.css)
+════════════════════════════════════════════════════════════ */
 
 /* Global Resets */
 *,
@@ -166,7 +143,7 @@ select:focus,
 input[type="date"]:focus {
   border-color: var(--ink);
   background-color: var(--surface);
-  box-shadow: 0 0 0 3px rgba(65, 45, 21, 0.15);
+  box-shadow: var(--focus-ring);
 }
 .hint {
   font-size: 11px;
@@ -188,7 +165,7 @@ select optgroup {
 }
 .btn {
   border: none;
-  color: #ffffff;
+  color: var(--on-primary);
   background: var(--primary-btn);
   padding: 10px 18px;
   border-radius: var(--radius);
@@ -305,7 +282,7 @@ select optgroup {
   overflow-x: auto;
   padding: 10px 12px;
   border: var(--border-thin);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   background-color: var(--surface);
   flex: 1;
   min-width: 0;
@@ -350,7 +327,7 @@ select optgroup {
 .qbubble {
   font-size: 11px;
   padding: 4px 10px;
-  border-radius: 20px;
+  border-radius: var(--radius-pill);
   border: var(--border-thin);
   color: var(--ink);
   background-color: var(--bg);
@@ -370,7 +347,7 @@ select optgroup {
   color: var(--ink);
   padding: 8px 12px;
   border: var(--border-thin);
-  border-radius: 20px;
+  border-radius: var(--radius-pill);
   background-color: var(--surface);
   white-space: nowrap;
   overflow-x: auto;
@@ -514,7 +491,7 @@ select optgroup {
 }
 .back-btn-small {
   border: none;
-  color: #ffffff;
+  color: var(--on-primary);
   background: var(--primary-btn);
   padding: 8px 16px;
   border-radius: var(--radius);
@@ -568,7 +545,7 @@ select optgroup {
 .seed-textarea:focus {
   border-color: var(--ink);
   background-color: var(--surface);
-  box-shadow: 0 0 0 3px rgba(65, 45, 21, 0.15);
+  box-shadow: var(--focus-ring);
 }
 .seed-textarea {
   resize: vertical;
@@ -581,7 +558,7 @@ select optgroup {
 }
 .seed-btn {
   border: none;
-  color: #ffffff;
+  color: var(--on-primary);
   background: var(--primary-btn);
   padding: 14px 24px;
   border-radius: var(--radius);
@@ -607,7 +584,7 @@ select optgroup {
   display: inline-block;
   padding: 14px 32px;
   background-color: var(--success);
-  color: white;
+  color: var(--on-primary);
   text-decoration: none;
   border-radius: var(--radius);
   font-weight: 700;
@@ -617,7 +594,7 @@ select optgroup {
     background-color 0.2s ease,
     transform 0.2s ease;
   text-transform: uppercase;
-  box-shadow: 0 4px 12px rgba(46, 125, 50, 0.2);
+  box-shadow: var(--shadow-success);
 }
 .seed-download-link:hover {
   background-color: var(--success-hover);

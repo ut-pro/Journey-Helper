@@ -10,8 +10,11 @@ pdfjsLib.GlobalWorkerOptions.workerSrc =
    width so PDF and HTML come out pixel-identical in width.
 ════════════════════════════════════════════════════════════ */
 const SHARED_CSS_W = 700;
-const DPR = window.devicePixelRatio || 1;
-const SHARED_BUF_W = Math.round(SHARED_CSS_W * DPR);
+/* ── Render-quality knob (decoupled from screen DPR) ──
+   Oversamples every render, then displays downscaled to 700px.
+   2 = good • 3 = crisp (default) • 4 = maximum (more RAM / slower) */
+const RENDER_SCALE = 3;
+const SHARED_BUF_W = Math.round(SHARED_CSS_W * RENDER_SCALE);
 
 /* ── State ── */
 const state = {
@@ -104,8 +107,8 @@ async function renderPdfPage(pdfDoc, pageNum, cropTB = 0, cropLR = 0) {
   const baseVP = page.getViewport({ scale: 1 });
 
   const ptPerPx = baseVP.width / SHARED_BUF_W;
-  const cropLRPt = cropLR * DPR * ptPerPx;
-  const cropTBPt = cropTB * DPR * ptPerPx;
+  const cropLRPt = cropLR * RENDER_SCALE * ptPerPx;
+  const cropTBPt = cropTB * RENDER_SCALE * ptPerPx;
   const contentWidthPt = baseVP.width - cropLRPt * 2;
   const scale = SHARED_BUF_W / contentWidthPt;
   const viewport = page.getViewport({ scale });
@@ -207,42 +210,39 @@ async function loadHTML(file) {
     `width:${SHARED_CSS_W}px;height:2000px;` +
     `border:none;visibility:hidden;overflow:hidden;`;
   document.body.appendChild(iframe);
+  iframe.src = url;
 
-  try {
-    iframe.src = url;
+  await new Promise((res) =>
+    iframe.addEventListener("load", res, { once: true }),
+  );
+  await delay(600);
 
-    await new Promise((res) =>
-      iframe.addEventListener("load", res, { once: true }),
-    );
-    await delay(600);
+  const iDoc = iframe.contentDocument;
 
-    const iDoc = iframe.contentDocument;
+  const ih = Math.min(
+    Math.max(iDoc.body.scrollHeight, iDoc.documentElement.scrollHeight),
+    8000,
+  );
+  iframe.style.height = ih + "px";
+  await delay(150);
 
-    const ih = Math.min(
-      Math.max(iDoc.body.scrollHeight, iDoc.documentElement.scrollHeight),
-      8000,
-    );
-    iframe.style.height = ih + "px";
-    await delay(150);
+  const oc = await html2canvas(iDoc.body, {
+    scale: RENDER_SCALE,
+    useCORS: true,
+    allowTaint: true,
+    logging: false,
+    width: SHARED_CSS_W,
+    height: ih,
+    windowWidth: SHARED_CSS_W,
+    windowHeight: ih,
+    x: 0,
+    y: 0,
+  });
 
-    const oc = await html2canvas(iDoc.body, {
-      scale: DPR,
-      useCORS: true,
-      allowTaint: true,
-      logging: false,
-      width: SHARED_CSS_W,
-      height: ih,
-      windowWidth: SHARED_CSS_W,
-      windowHeight: ih,
-      x: 0,
-      y: 0,
-    });
+  document.body.removeChild(iframe);
+  URL.revokeObjectURL(url);
 
-    return imageFromDataURL(oc.toDataURL());
-  } finally {
-    document.body.removeChild(iframe);
-    URL.revokeObjectURL(url);
-  }
+  return imageFromDataURL(oc.toDataURL());
 }
 
 /* ══════════════════════════════════════════
@@ -255,8 +255,9 @@ function showImage(img) {
   el.flashCanvas.width = img.width;
   el.flashCanvas.height = img.height;
   el.flashCanvas.style.width = SHARED_CSS_W + "px";
-  el.flashCanvas.style.height = Math.round(img.height / DPR) + "px";
-
+  el.flashCanvas.style.height = Math.round(img.height / RENDER_SCALE) + "px";
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = "high";
   ctx.clearRect(0, 0, img.width, img.height);
   ctx.drawImage(img, 0, 0);
 }
