@@ -1,0 +1,691 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Campaign Builder</title>
+    <!-- Importing Cinzel and Inter fonts from Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="campaign-builder.css" />
+  </head>
+  <body>
+    <header>
+      <h1 class="mainHeading">Campaign Builder</h1>
+      <p class="subHeading">Generate campaign names and SQL queries.</p>
+    </header>
+
+    <div id="mainPage" class="page-container active">
+      <main>
+        <div class="wrap">
+          <div class="grid">
+            <section class="card">
+              <h2>Inputs</h2>
+              <div class="body">
+                <div class="form">
+                  <div class="field">
+                    <label for="run">Run Number</label>
+                    <input
+                      id="run"
+                      class="input"
+                      placeholder="0007"
+                      maxlength="8"
+                      autocomplete="off"
+                    />
+                    <div class="hint">Auto‑pads to 4 digits.</div>
+                  </div>
+                  <div class="field">
+                    <label for="market">Market (Country)</label>
+                    <select id="market" class="input">
+                      <option value="">Select Country</option>
+                      <option value="DZ">Algeria</option>
+                      <option value="AR">Argentina</option>
+                      <option value="BY">Belarus</option>
+                      <option value="BR">Brazil</option>
+                      <option value="CL">Chile</option>
+                      <option value="CO">Colombia</option>
+                      <option value="CR">Costa Rica</option>
+                      <option value="DO">Dominican Republic</option>
+                      <option value="EC">Ecuador</option>
+                      <option value="EG">Egypt</option>
+                      <option value="SV">El Salvador</option>
+                      <option value="XG">Gulf</option>
+                      <option value="GT">Guatemala</option>
+                      <option value="IN">India</option>
+                      <option value="ID">Indonesia</option>
+                      <option value="JM">Jamaica</option>
+                      <option value="JO">Jordan</option>
+                      <option value="KZ">Kazakhstan</option>
+                      <option value="KE">Kenya</option>
+                      <option value="LB">Lebanon</option>
+                      <option value="MY">Malaysia</option>
+                      <option value="MX">Mexico</option>
+                      <option value="MA">Morocco</option>
+                      <option value="NG">Nigeria</option>
+                      <option value="PK">Pakistan</option>
+                      <option value="PA">Panama</option>
+                      <option value="PE">Peru</option>
+                      <option value="PH">Philippines</option>
+                      <option value="RU">Russia</option>
+                      <option value="SA">Saudi Arabia</option>
+                      <option value="LK">Sri Lanka</option>
+                      <option value="TH">Thailand</option>
+                      <option value="TT">Trinidad and Tobago</option>
+                      <option value="TN">Tunisia</option>
+                      <option value="TR">Turkey</option>
+                      <option value="UA">Ukraine</option>
+                      <option value="UY">Uruguay</option>
+                      <option value="VN">Vietnam</option>
+                      <option value="VE">Venezuela</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label for="date">Send-out Date</label>
+                    <input id="date" type="date" class="input" />
+                    <div class="hint">DDMMYYYY in names.</div>
+                  </div>
+                  <div class="field">
+                    <label for="brand">Brand</label>
+                    <input
+                      id="brand"
+                      class="input"
+                      placeholder="AREXVY"
+                      maxlength="40"
+                      autocomplete="off"
+                    />
+                  </div>
+                  <div class="field">
+                    <label for="filetype">File Type</label>
+                    <select id="filetype" class="input">
+                      <option value="SP">Speciality (SP)</option>
+                      <option value="FF">Flatfile (FF)</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label for="clid">CLID</label>
+                    <input
+                      id="clid"
+                      class="input"
+                      placeholder="PM-TH-RSA-EML-250009"
+                      maxlength="80"
+                      autocomplete="off"
+                    />
+                  </div>
+                  <div class="field">
+                    <label for="ss">SS (Optional)</label>
+                    <input
+                      id="ss"
+                      class="input"
+                      placeholder="e.g., 219"
+                      maxlength="40"
+                      autocomplete="off"
+                    />
+                  </div>
+                </div>
+
+                <div
+                  id="specialtyRow"
+                  class="field"
+                  style="margin-top: 10px; display: none"
+                >
+                  <label for="specialty">Specialty CSV (SP)</label>
+                  <input
+                    id="specialty"
+                    class="input"
+                    placeholder="Cardiology,Diabetes,Nephrology"
+                    autocomplete="off"
+                  />
+                </div>
+
+                <div
+                  id="ffJoinRow"
+                  class="two-col"
+                  style="margin-top: 10px; display: none"
+                >
+                  <div class="field">
+                    <label for="ffJoinKey">Flatfile Join Key (FF)</label>
+                    <select id="ffJoinKey" class="input">
+                      <option value="VeevaID">VeevaID</option>
+                      <option value="MDMID">MDMID</option>
+                      <option value="Email">Email</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="row-buttons">
+                  <button id="build" class="btn">Build</button>
+                  <button id="clear" class="btn">Clear</button>
+                  <button id="copyAll" class="btn">Copy All</button>
+                </div>
+
+                <div class="specialty-check">
+                  <div class="specialty-check-title">Specialty Check</div>
+                  <div class="sql-container">
+                    <div id="specialtyCheckSql" class="sql"></div>
+                    <button
+                      class="icon-btn copy sql-copy-btn"
+                      data-target="specialtyCheckSql"
+                      title="Copy query"
+                    >
+                      <svg class="glyph" viewBox="0 0 24 24">
+                        <path
+                          d="M16 1H4c-1.1 0-2 .9-2 2v12h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2z"
+                        />
+                      </svg>
+                      <svg
+                        class="tick"
+                        viewBox="0 0 24 24"
+                        width="18"
+                        height="18"
+                      >
+                        <path
+                          d="M9 16.2l-3.5-3.5-1.4 1.4L9 19 20 8l-1.4-1.4z"
+                          fill="currentColor"
+                        />
+                      </svg>
+                    </button>
+
+                    <div
+                      style="
+                        margin-top: 16px;
+                        padding-top: 16px;
+                        border-top: 1px solid var(--border);
+                      "
+                    >
+                      <button
+                        class="btn"
+                        id="seedListBtn"
+                        style="width: 100%"
+                        onclick="showSeedPage()"
+                      >
+                        Seed List Generator
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="card">
+              <h2>Output</h2>
+              <div class="body">
+                <div class="caps" style="margin-bottom: 10px">
+                  <div id="flatfileNameCap" class="cap" style="display: none">
+                    <div class="label">FlatFile Name</div>
+                    <div class="value-row">
+                      <div id="flatfileName" class="value">—</div>
+                      <button
+                        class="icon-btn copy"
+                        data-target="flatfileName"
+                        title="Copy"
+                      >
+                        <svg class="glyph" viewBox="0 0 24 24">
+                          <path
+                            d="M16 1H4c-1.1 0-2 .9-2 2v12h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2z"
+                          />
+                        </svg>
+                        <svg
+                          class="tick"
+                          viewBox="0 0 24 24"
+                          width="18"
+                          height="18"
+                        >
+                          <path
+                            d="M9 16.2l-3.5-3.5-1.4 1.4L9 19 20 8l-1.4-1.4z"
+                            fill="currentColor"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="cap">
+                    <div class="label">Email Template Name</div>
+                    <div class="value-row">
+                      <div id="emailName" class="value">—</div>
+                      <button
+                        class="icon-btn copy"
+                        data-target="emailName"
+                        title="Copy"
+                      >
+                        <svg class="glyph" viewBox="0 0 24 24">
+                          <path
+                            d="M16 1H4c-1.1 0-2 .9-2 2v12h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2z"
+                          />
+                        </svg>
+                        <svg
+                          class="tick"
+                          viewBox="0 0 24 24"
+                          width="18"
+                          height="18"
+                        >
+                          <path
+                            d="M9 16.2l-3.5-3.5-1.4 1.4L9 19 20 8l-1.4-1.4z"
+                            fill="currentColor"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="cap">
+                    <div class="label">DE Name</div>
+                    <div class="value-row">
+                      <div id="deName" class="value">—</div>
+                      <button
+                        class="icon-btn copy"
+                        data-target="deName"
+                        title="Copy"
+                      >
+                        <svg class="glyph" viewBox="0 0 24 24">
+                          <path
+                            d="M16 1H4c-1.1 0-2 .9-2 2v12h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2z"
+                          />
+                        </svg>
+                        <svg
+                          class="tick"
+                          viewBox="0 0 24 24"
+                          width="18"
+                          height="18"
+                        >
+                          <path
+                            d="M9 16.2l-3.5-3.5-1.4 1.4L9 19 20 8l-1.4-1.4z"
+                            fill="currentColor"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="cap">
+                    <div class="label">Automation Name</div>
+                    <div class="value-row">
+                      <div id="autoName" class="value">—</div>
+                      <button
+                        class="icon-btn copy"
+                        data-target="autoName"
+                        title="Copy"
+                      >
+                        <svg class="glyph" viewBox="0 0 24 24">
+                          <path
+                            d="M16 1H4c-1.1 0-2 .9-2 2v12h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2z"
+                          />
+                        </svg>
+                        <svg
+                          class="tick"
+                          viewBox="0 0 24 24"
+                          width="18"
+                          height="18"
+                        >
+                          <path
+                            d="M9 16.2l-3.5-3.5-1.4 1.4L9 19 20 8l-1.4-1.4z"
+                            fill="currentColor"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="cap">
+                    <div class="label">Journey Name</div>
+                    <div class="value-row">
+                      <div id="journeyName" class="value">—</div>
+                      <button
+                        class="icon-btn copy"
+                        data-target="journeyName"
+                        title="Copy"
+                      >
+                        <svg class="glyph" viewBox="0 0 24 24">
+                          <path
+                            d="M16 1H4c-1.1 0-2 .9-2 2v12h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2z"
+                          />
+                        </svg>
+                        <svg
+                          class="tick"
+                          viewBox="0 0 24 24"
+                          width="18"
+                          height="18"
+                        >
+                          <path
+                            d="M9 16.2l-3.5-3.5-1.4 1.4L9 19 20 8l-1.4-1.4z"
+                            fill="currentColor"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="queries">
+                  <div class="q">
+                    <div class="qhead">
+                      <div class="qtitle">
+                        <span class="qbubble">Q1</span>
+                        <div class="qname-container">
+                          <span id="q1name" class="qname">—</span>
+                          <button
+                            class="icon-btn copy"
+                            data-target="q1name"
+                            title="Copy name"
+                          >
+                            <svg class="glyph" viewBox="0 0 24 24">
+                              <path
+                                d="M16 1H4c-1.1 0-2 .9-2 2v12h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2z"
+                              />
+                            </svg>
+                            <svg
+                              class="tick"
+                              viewBox="0 0 24 24"
+                              width="18"
+                              height="18"
+                            >
+                              <path
+                                d="M9 16.2l-3.5-3.5-1.4 1.4L9 19 20 8l-1.4-1.4z"
+                                fill="currentColor"
+                              />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="qbody">
+                      <div class="sql-container">
+                        <div id="q1sql" class="sql">—</div>
+                        <button
+                          class="icon-btn copy sql-copy-btn"
+                          data-target="q1sql"
+                          title="Copy query"
+                        >
+                          <svg class="glyph" viewBox="0 0 24 24">
+                            <path
+                              d="M16 1H4c-1.1 0-2 .9-2 2v12h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2z"
+                            />
+                          </svg>
+                          <svg
+                            class="tick"
+                            viewBox="0 0 24 24"
+                            width="18"
+                            height="18"
+                          >
+                            <path
+                              d="M9 16.2l-3.5-3.5-1.4 1.4L9 19 20 8l-1.4-1.4z"
+                              fill="currentColor"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="q">
+                    <div class="qhead">
+                      <div class="qtitle">
+                        <span class="qbubble">Q2</span>
+                        <div class="qname-container">
+                          <span id="q2name" class="qname">—</span>
+                          <button
+                            class="icon-btn copy"
+                            data-target="q2name"
+                            title="Copy name"
+                          >
+                            <svg class="glyph" viewBox="0 0 24 24">
+                              <path
+                                d="M16 1H4c-1.1 0-2 .9-2 2v12h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2z"
+                              />
+                            </svg>
+                            <svg
+                              class="tick"
+                              viewBox="0 0 24 24"
+                              width="18"
+                              height="18"
+                            >
+                              <path
+                                d="M9 16.2l-3.5-3.5-1.4 1.4L9 19 20 8l-1.4-1.4z"
+                                fill="currentColor"
+                              />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="qbody">
+                      <div class="sql-container">
+                        <div id="q2sql" class="sql">—</div>
+                        <button
+                          class="icon-btn copy sql-copy-btn"
+                          data-target="q2sql"
+                          title="Copy query"
+                        >
+                          <svg class="glyph" viewBox="0 0 24 24">
+                            <path
+                              d="M16 1H4c-1.1 0-2 .9-2 2v12h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2z"
+                            />
+                          </svg>
+                          <svg
+                            class="tick"
+                            viewBox="0 0 24 24"
+                            width="18"
+                            height="18"
+                          >
+                            <path
+                              d="M9 16.2l-3.5-3.5-1.4 1.4L9 19 20 8l-1.4-1.4z"
+                              fill="currentColor"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="q">
+                    <div class="qhead">
+                      <div class="qtitle">
+                        <span class="qbubble">Q3</span>
+                        <div class="qname-container">
+                          <span id="q3name" class="qname">—</span>
+                          <button
+                            class="icon-btn copy"
+                            data-target="q3name"
+                            title="Copy name"
+                          >
+                            <svg class="glyph" viewBox="0 0 24 24">
+                              <path
+                                d="M16 1H4c-1.1 0-2 .9-2 2v12h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2z"
+                              />
+                            </svg>
+                            <svg
+                              class="tick"
+                              viewBox="0 0 24 24"
+                              width="18"
+                              height="18"
+                            >
+                              <path
+                                d="M9 16.2l-3.5-3.5-1.4 1.4L9 19 20 8l-1.4-1.4z"
+                                fill="currentColor"
+                              />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="qbody">
+                      <div class="sql-container">
+                        <div id="q3sql" class="sql">—</div>
+                        <button
+                          class="icon-btn copy sql-copy-btn"
+                          data-target="q3sql"
+                          title="Copy query"
+                        >
+                          <svg class="glyph" viewBox="0 0 24 24">
+                            <path
+                              d="M16 1H4c-1.1 0-2 .9-2 2v12h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2z"
+                            />
+                          </svg>
+                          <svg
+                            class="tick"
+                            viewBox="0 0 24 24"
+                            width="18"
+                            height="18"
+                          >
+                            <path
+                              d="M9 16.2l-3.5-3.5-1.4 1.4L9 19 20 8l-1.4-1.4z"
+                              fill="currentColor"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="additional-queries">
+                  <div class="simple-query">
+                    <div class="simple-query-head">Eligible Count</div>
+                    <div class="simple-query-body">
+                      <div class="sql-container">
+                        <div id="eligibleCountSql" class="sql">—</div>
+                        <button
+                          class="icon-btn copy sql-copy-btn"
+                          data-target="eligibleCountSql"
+                          title="Copy query"
+                        >
+                          <svg class="glyph" viewBox="0 0 24 24">
+                            <path
+                              d="M16 1H4c-1.1 0-2 .9-2 2v12h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2z"
+                            />
+                          </svg>
+                          <svg
+                            class="tick"
+                            viewBox="0 0 24 24"
+                            width="18"
+                            height="18"
+                          >
+                            <path
+                              d="M9 16.2l-3.5-3.5-1.4 1.4L9 19 20 8l-1.4-1.4z"
+                              fill="currentColor"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="simple-query">
+                    <div class="simple-query-head">FinalCount_By_Specialty</div>
+                    <div class="simple-query-body">
+                      <div class="sql-container">
+                        <div id="finalCountSql" class="sql">—</div>
+                        <button
+                          class="icon-btn copy sql-copy-btn"
+                          data-target="finalCountSql"
+                          title="Copy query"
+                        >
+                          <svg class="glyph" viewBox="0 0 24 24">
+                            <path
+                              d="M16 1H4c-1.1 0-2 .9-2 2v12h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2z"
+                            />
+                          </svg>
+                          <svg
+                            class="tick"
+                            viewBox="0 0 24 24"
+                            width="18"
+                            height="18"
+                          >
+                            <path
+                              d="M9 16.2l-3.5-3.5-1.4 1.4L9 19 20 8l-1.4-1.4z"
+                              fill="currentColor"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <div id="seedPage" class="page-container">
+      <div class="seed-page-wrapper">
+        <div class="seed-header">
+          <button class="back-btn-small" onclick="showMainPage()">
+            ← Back
+          </button>
+          <h1>SEED List CSV Generator</h1>
+        </div>
+
+        <div class="seed-container">
+          <label class="seed-label" for="seedCountry">Select Country</label>
+          <select id="seedCountry" class="seed-select">
+            <option value="DZ">Algeria</option>
+            <option value="AR">Argentina</option>
+            <option value="BY">Belarus</option>
+            <option value="BR">Brazil</option>
+            <option value="CL">Chile</option>
+            <option value="CO">Colombia</option>
+            <option value="CR">Costa Rica</option>
+            <option value="DO">Dominican Republic</option>
+            <option value="EC">Ecuador</option>
+            <option value="EG">Egypt</option>
+            <option value="SV">El Salvador</option>
+            <option value="XG">Gulf</option>
+            <option value="GT">Guatemala</option>
+            <option value="IN">India</option>
+            <option value="ID">Indonesia</option>
+            <option value="JM">Jamaica</option>
+            <option value="JO">Jordan</option>
+            <option value="KZ">Kazakhstan</option>
+            <option value="KE">Kenya</option>
+            <option value="LB">Lebanon</option>
+            <option value="MY">Malaysia</option>
+            <option value="MX">Mexico</option>
+            <option value="MA">Morocco</option>
+            <option value="NG">Nigeria</option>
+            <option value="PK">Pakistan</option>
+            <option value="PA">Panama</option>
+            <option value="PE">Peru</option>
+            <option value="PH">Philippines</option>
+            <option value="RU">Russia</option>
+            <option value="SA">Saudi Arabia</option>
+            <option value="LK">Sri Lanka</option>
+            <option value="TH">Thailand</option>
+            <option value="TT">Trinidad and Tobago</option>
+            <option value="TN">Tunisia</option>
+            <option value="TR">Turkey</option>
+            <option value="UA">Ukraine</option>
+            <option value="UY">Uruguay</option>
+            <option value="VN">Vietnam</option>
+            <option value="VE">Venezuela</option>
+          </select>
+
+          <label class="seed-label" for="seedEmails">Enter Email IDs</label>
+          <textarea
+            id="seedEmails"
+            class="seed-textarea"
+            rows="6"
+            placeholder="One email per line (e.g., john.d.doe@example.com)"
+          ></textarea>
+          <div class="seed-note">
+            Note: Enter emails line-by-line or comma-separated.
+          </div>
+
+          <button class="seed-btn" onclick="generateSeedCSV()">
+            Generate CSV
+          </button>
+
+          <div id="seedOutput" class="seed-output">
+            <a
+              id="seedDownloadLink"
+              class="seed-download-link"
+              style="display: none"
+              >Download CSV</a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="campaign-builder.js"></script>
+  </body>
+</html>
