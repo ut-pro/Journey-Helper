@@ -25,10 +25,11 @@ body {
 
 .mainHeading {
   font-family: var(--serif);
-  font-size: 4rem;
+  font-size: 3rem;
   color: var(--ink);
   letter-spacing: 4px;
   margin-bottom: 30px;
+  margin-top: 0px;
 }
 
 .subHeading {
@@ -155,6 +156,10 @@ body {
   box-shadow: var(--shadow);
 }
 
+.inputSpecialties:hover {
+  transform: translateY(-2px);
+}
+
 .inputSpecialties label {
   font-weight: bold;
   color: var(--ink);
@@ -184,6 +189,10 @@ body {
   border-radius: var(--radius-lg);
   background: var(--surface);
   box-shadow: var(--shadow);
+}
+
+.result:hover {
+  transform: translateY(-2px);
 }
 
 .outputContainer {
@@ -289,6 +298,9 @@ button:active {
   max-width: 60%;
   min-width: 0;
 }
+.file-pill:hover {
+  transform: translateY(-2px);
+}
 .file-pill .badge {
   margin-bottom: 0;
   flex-shrink: 0;
@@ -317,6 +329,10 @@ table {
   width: 100%;
   border-collapse: collapse;
   background: var(--surface);
+}
+
+table:hover {
+  transform: translateY(-2px);
 }
 
 th,
