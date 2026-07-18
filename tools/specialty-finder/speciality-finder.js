@@ -22,6 +22,21 @@ let data;
 let givenSpecialties;
 let onlySpecialties = [];
 
+// Copy to clipboard — delegated, bound once
+document.addEventListener("click", (e) => {
+  const btn = e.target.closest(".icon-btn");
+  if (!btn) return;
+
+  const target = document.getElementById(btn.dataset.target);
+  if (!target) return;
+
+  navigator.clipboard.writeText(target.textContent.trim());
+
+  btn.classList.add("copied");
+  clearTimeout(btn._copiedTimer);
+  btn._copiedTimer = setTimeout(() => btn.classList.remove("copied"), 1500);
+});
+
 fileInput.addEventListener("change", function (event) {
   const file = event.target.files[0];
 
@@ -298,31 +313,6 @@ Total <span class="totalCount">${givenSpecialties.count}</span>
       row.classList.remove("matchRow");
     }
   });
-
-  // copy button
-  document.getElementById("commonText").addEventListener("click", function () {
-    const text = commonStr;
-    navigator.clipboard.writeText(text);
-
-    document.getElementById("commonText").innerText = "Copied!";
-
-    setTimeout(() => {
-      document.getElementById("commonText").innerText = "Copy";
-    }, 2000);
-  });
-
-  document
-    .getElementById("unCommonText")
-    .addEventListener("click", function () {
-      const text = unCommonStr;
-      navigator.clipboard.writeText(text);
-
-      document.getElementById("unCommonText").innerText = "Copied!";
-
-      setTimeout(() => {
-        document.getElementById("unCommonText").innerText = "Copy";
-      }, 2000);
-    });
 
   console.log(
     `There are ${givenSpecialties.count} specialities given and out of them ${commonElements.length} are available in our database and ${unCommonElements.length} are not available.`,

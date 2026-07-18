@@ -62,6 +62,9 @@ body {
   background: var(--surface-cream);
   border-color: var(--ink);
 }
+.drop-zone:hover {
+  transform: translateY(-2px);
+}
 
 /* click area — whole card is clickable via the invisible input */
 .dz-click-area {
@@ -269,11 +272,64 @@ button:active {
   transform: translateY(0);
 }
 
-.copy {
-  font-size: 12px;
-  padding: 5px 12px;
-  border-radius: var(--radius-sm);
-  margin-top: 15px;
+.icon-btn {
+  --sz: 38px;
+  width: var(--sz);
+  height: var(--sz);
+  padding: 0;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius);
+  border: var(--border-thin);
+  background-color: var(--surface-cream);
+  cursor: pointer;
+  position: relative;
+  transition:
+    background-color 0.2s,
+    border-color 0.2s;
+}
+
+.icon-btn:hover {
+  background-color: var(--surface);
+  border-color: var(--ink);
+}
+
+.glyph {
+  width: 18px;
+  height: 18px;
+  color: var(--ink-muted);
+  transition: color 0.2s ease;
+}
+
+.icon-btn:hover .glyph {
+  color: var(--ink);
+}
+
+.tick {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  color: var(--success);
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.8);
+  transform-origin: center;
+  transition:
+    opacity 0.2s,
+    transform 0.2s;
+  pointer-events: none;
+}
+
+.icon-btn.copied .glyph {
+  opacity: 0;
+}
+
+.icon-btn.copied .tick {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
 }
 
 .resetSpace {
@@ -546,4 +602,26 @@ tr:nth-child(even) {
 
 #backToTop img {
   display: block;
+}
+
+/* ── Copy icon pinned inside result boxes ── */
+.outputContainer .specBox {
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  min-height: unset;
+  position: relative;
+}
+
+.copy-corner {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1;
+  background-color: var(--surface);
+}
+
+.specBox .commonSpecialties,
+.specBox .unCommonSpecialties {
+  padding-right: 58px;
 }
