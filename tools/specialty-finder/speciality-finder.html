@@ -9,6 +9,11 @@
       rel="stylesheet"
     />
 
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css"
+    />
+
     <link rel="stylesheet" href="../../shared/theme-tokens.css" />
     <link rel="stylesheet" href="speciality-finder.css" />
   </head>
@@ -19,10 +24,24 @@
       Upload, Compare & Discover Common Medical Specialties
     </p>
 
-    <input type="file" id="csvFile" accept=".csv" autocomplete="off" />
-    <p id="helperText">Upload CSV file here</p>
+    <!-- Upload drop zone — visible until a CSV loads; returns on Reset -->
+    <div class="drop-zone" id="zoneCsv">
+      <div class="dz-click-area" id="clickCsv">
+        <input type="file" id="csvFile" accept=".csv" autocomplete="off" />
+        <span class="badge badge-a">CSV file only</span>
+        <i class="ti ti-file-type-csv"></i>
+        <div class="dz-sub">Click or drop a CSV file</div>
+        <div class="dz-name" id="nameCsv"></div>
+      </div>
+      <div class="err" id="errCsv"></div>
+    </div>
 
+    <!-- File bar: loaded-file pill (left) + Reset (right), one balanced row -->
     <div class="resetSpace">
+      <div class="file-pill" id="filePill" style="display: none">
+        <span class="badge badge-a">CSV</span>
+        <span class="file-pill-name" id="filePillName"></span>
+      </div>
       <button type="button" id="resetApp">Reset & Upload New File</button>
     </div>
 

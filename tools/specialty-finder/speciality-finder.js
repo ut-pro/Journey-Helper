@@ -10,6 +10,13 @@ const commonSpecialties = document.querySelector(".commonSpecialties");
 const unCommonSpecialties = document.querySelector(".unCommonSpecialties");
 const resetApp = document.getElementById("resetApp");
 
+/* ── Drop-zone refs (upload upgrade) ── */
+const zoneCsv = document.getElementById("zoneCsv");
+const nameCsv = document.getElementById("nameCsv");
+const errCsv = document.getElementById("errCsv");
+const filePill = document.getElementById("filePill");
+const filePillName = document.getElementById("filePillName");
+
 let searchTimeout;
 let data;
 let givenSpecialties;
@@ -21,6 +28,11 @@ fileInput.addEventListener("change", function (event) {
   if (!file) {
     return;
   }
+
+  nameCsv.textContent = file.name;
+  filePillName.textContent = file.name; // pill text = current file, every upload
+  filePillName.title = file.name; // full name on hover (pill may show …)
+  errCsv.textContent = "";
 
   const reader = new FileReader();
 
@@ -42,12 +54,54 @@ fileInput.addEventListener("change", function (event) {
 
     displayTable(data);
 
+    // upload succeeded -> hide the drop zone, reveal the filename pill
+    // (zone returns only via Reset / refresh — pill mirrors the loaded file)
+    zoneCsv.style.display = "none";
+    filePill.style.display = "flex";
+
     initializeSearch();
 
     slowScrollTo(250, 800);
   };
 
   reader.readAsText(file);
+});
+
+function resetZoneCsv() {
+  zoneCsv.style.display = "block"; // zone returns
+  filePill.style.display = "none"; // pill hides
+  nameCsv.textContent = "";
+  errCsv.textContent = "";
+  zoneCsv.classList.remove("drag-over");
+}
+
+// stop the browser's default "open the dropped file" navigation
+["dragover", "drop"].forEach((evt) =>
+  window.addEventListener(evt, (e) => e.preventDefault()),
+);
+
+zoneCsv.addEventListener("dragover", (e) => {
+  e.preventDefault();
+  zoneCsv.classList.add("drag-over");
+});
+zoneCsv.addEventListener("dragleave", () =>
+  zoneCsv.classList.remove("drag-over"),
+);
+zoneCsv.addEventListener("drop", (e) => {
+  e.preventDefault();
+  zoneCsv.classList.remove("drag-over");
+  const file = e.dataTransfer.files[0];
+  if (!file) return;
+  if (!file.name.toLowerCase().endsWith(".csv")) {
+    errCsv.textContent = "Only CSV files are allowed.";
+    return;
+  }
+  // hand the dropped file to the SAME input, then fire a normal change
+  // event — the existing parsing pipeline runs untouched
+  const dt = new DataTransfer();
+  dt.items.add(file);
+  fileInput.files = dt.files;
+  fileInput.dispatchEvent(new Event("change", { bubbles: true }));
 });
 
 // smooth scrolling function
@@ -296,8 +350,9 @@ function reset() {
   unCommonSpecialties.innerHTML = "";
   data = [];
 
-  document.getElementById("csvFile").style.display = "inline-block";
-  document.getElementById("helperText").style.display = "block";
+  // restore the drop zone to its empty/expanded state
+  resetZoneCsv();
+
   document.getElementById("resetApp").style.display = "none";
 
   console.log("Every thing is removed");
@@ -307,8 +362,6 @@ function reset() {
 function displayTable(data) {
   boxOne.style.display = "flex";
   boxTwo.style.display = "block";
-  document.getElementById("csvFile").style.display = "none";
-  document.getElementById("helperText").style.display = "none";
   document.getElementById("resetApp").style.display = "inline-block";
 
   table.innerHTML = "";
