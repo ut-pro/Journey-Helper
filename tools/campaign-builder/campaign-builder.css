@@ -41,11 +41,12 @@ body {
 .subHeading {
   color: var(--border-color);
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 2px;
   text-align: center;
   text-transform: uppercase;
   margin: 8px 0 28px 0;
+  opacity: 0.85;
 }
 
 /* Layout Elements */
