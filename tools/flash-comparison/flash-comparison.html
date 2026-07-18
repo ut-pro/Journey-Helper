@@ -175,6 +175,27 @@
           <p>Upload both files above to begin</p>
         </div>
         <canvas id="flashCanvas"></canvas>
+
+        <!-- Fullscreen control drawer (left rail + slide-out panel) -->
+        <div class="fs-panel" id="fsPanel">
+          <div class="fs-panel-title">Controls</div>
+          <div class="fs-slot" id="fsSlotTransport"></div>
+          <div class="fs-divider"></div>
+          <div class="fs-crop-title">File A — Crop</div>
+          <div class="fs-slot" id="fsSlotCropA"></div>
+          <div class="fs-crop-title">File B — Crop</div>
+          <div class="fs-slot" id="fsSlotCropB"></div>
+        </div>
+
+        <!-- drawer rail: sibling so the panel's overflow can't clip it -->
+        <button
+          type="button"
+          class="fs-rail"
+          id="fsRail"
+          title="Show / hide controls"
+        >
+          <i class="ti ti-chevron-right" id="fsRailIcon"></i>
+        </button>
       </div>
 
       <!-- Status bar -->

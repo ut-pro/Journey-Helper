@@ -116,6 +116,8 @@ function collapseZone(which) {
     const isOpen = expandable.classList.toggle("open");
     toggle.classList.toggle("open", isOpen);
   };
+
+  fsSyncCropVisibility(); // keep the fullscreen drawer in sync, live
 }
 
 function resetZone(which) {
@@ -455,12 +457,13 @@ el.cropLRB.addEventListener("change", rerenderB);
 
 /* ── Control buttons ── */
 el.startBtn.addEventListener("click", () => {
-  state.cycles = 0;
-  startFlash();
+  startFlash(); // count continues from where it stopped
 });
 el.stopBtn.addEventListener("click", stopFlash);
 
 el.resetBtn.addEventListener("click", () => {
+  // resetting inside fullscreen -> leave fullscreen too
+  if (document.fullscreenElement) document.exitFullscreen();
   stopFlash();
   state.pdfDocA = null;
   state.pdfDocB = null;
@@ -524,10 +527,57 @@ el.resetBtn.addEventListener("click", () => {
   });
 });
 
+/* ── Fullscreen control drawer ── */
+const fsPanel = document.getElementById("fsPanel");
+const fsRail = document.getElementById("fsRail");
+const fsRailIcon = document.getElementById("fsRailIcon");
+const fsSlotTransport = document.getElementById("fsSlotTransport");
+const fsSlotCropA = document.getElementById("fsSlotCropA");
+const fsSlotCropB = document.getElementById("fsSlotCropB");
+const controlsBar = document.querySelector(".controls");
+const statusBarEl = document.querySelector(".status-bar");
+const cropSlidersA = document.querySelector("#pickerA .crop-sliders");
+const cropSlidersB = document.querySelector("#pickerB .crop-sliders");
+const canvasWrap = document.getElementById("canvasWrap");
+
+// remember each node's original home so it goes back on exit
+const fsHomes = new Map();
+[controlsBar, cropSlidersA, cropSlidersB, statusBarEl].forEach((n) => {
+  if (n) fsHomes.set(n, { parent: n.parentNode, next: n.nextSibling });
+});
+
+function fsSetOpen(open) {
+  fsPanel.classList.toggle("open", open);
+  fsRail.classList.toggle("open", open); // rail slides along with the panel
+  fsRailIcon.className = open ? "ti ti-chevron-left" : "ti ti-chevron-right";
+}
+
+// drawer crop sections mirror the upload cards: only for loaded PDFs
+function fsSyncCropVisibility() {
+  if (!fsSlotCropA || !fsSlotCropB) return; // drawer markup absent -> no-op
+  const showA = el.pickerA.classList.contains("show");
+  const showB = el.pickerB.classList.contains("show");
+  fsSlotCropA.style.display = showA ? "" : "none";
+  fsSlotCropA.previousElementSibling.style.display = showA ? "" : "none"; // "File A — Crop" title
+  fsSlotCropB.style.display = showB ? "" : "none";
+  fsSlotCropB.previousElementSibling.style.display = showB ? "" : "none"; // "File B — Crop" title
+}
+
+fsRail.addEventListener("click", () => {
+  fsSetOpen(!fsPanel.classList.contains("open"));
+});
+
+// clicking the canvas/stage collapses the drawer; clicks INSIDE it never do
+canvasWrap.addEventListener("click", (e) => {
+  if (!fsPanel.classList.contains("open")) return;
+  // slider drags, panel buttons and the rail itself never collapse the drawer
+  if (fsPanel.contains(e.target) || fsRail.contains(e.target)) return;
+  fsSetOpen(false);
+});
+
 /* ── Fullscreen ── */
 const fullscreenBtn = document.getElementById("fullscreenBtn");
 const fullscreenIcon = document.getElementById("fullscreenIcon");
-const canvasWrap = document.getElementById("canvasWrap");
 
 fullscreenBtn.addEventListener("click", () => {
   if (!document.fullscreenElement) {
@@ -537,12 +587,24 @@ fullscreenBtn.addEventListener("click", () => {
   }
 });
 document.addEventListener("fullscreenchange", () => {
-  fullscreenIcon.className = document.fullscreenElement
+  const inFs = !!document.fullscreenElement;
+  fullscreenIcon.className = inFs
     ? "ti ti-arrows-minimize"
     : "ti ti-arrows-maximize";
-  fullscreenBtn.title = document.fullscreenElement
-    ? "Exit fullscreen"
-    : "Toggle fullscreen";
+  fullscreenBtn.title = inFs ? "Exit fullscreen" : "Toggle fullscreen";
+
+  if (inFs) {
+    // move the REAL controls in — listeners & state travel with them
+    fsSlotTransport.appendChild(controlsBar);
+    if (cropSlidersA) fsSlotCropA.appendChild(cropSlidersA);
+    if (cropSlidersB) fsSlotCropB.appendChild(cropSlidersB);
+    canvasWrap.appendChild(statusBarEl); // status = permanent corner chip
+    fsSyncCropVisibility(); // crop sections only where a PDF is loaded
+  } else {
+    // restore everything to its original home, drawer closed for next time
+    fsHomes.forEach((home, node) => home.parent.insertBefore(node, home.next));
+    fsSetOpen(false);
+  }
 });
 
 /* ══════════════════════════════════════════

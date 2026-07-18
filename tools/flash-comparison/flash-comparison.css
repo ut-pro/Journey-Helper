@@ -96,6 +96,9 @@ body {
   background: var(--surface-cream);
   border-color: var(--ink);
 }
+.drop-zone:hover {
+  transform: translateY(-2px);
+}
 
 /* click area */
 .dz-click-area {
@@ -306,6 +309,9 @@ body {
   box-shadow: var(--shadow);
   margin-bottom: 16px;
 }
+.controls:hover {
+  transform: translateY(-2px);
+}
 .ctrl-grp {
   display: flex;
   align-items: center;
@@ -407,6 +413,9 @@ button:active,
   display: none;
   max-width: 100%;
   margin: 0 auto; /* centered at 100% zoom; auto margins collapse to 0 when zoomed wider, so scrolling reaches every pixel */
+}
+.canvas-wrap:hover {
+  transform: translateY(-2px);
 }
 
 /* placeholder */
@@ -514,21 +523,20 @@ button:active,
   width: auto;
   height: auto;
 }
-.canvas-wrap:fullscreen .fullscreen-btn,
-.canvas-wrap:-webkit-full-screen .fullscreen-btn,
-.canvas-wrap:-moz-full-screen .fullscreen-btn {
+.canvas-wrap:fullscreen .fullscreen-btn {
+  position: fixed; /* stays glued while the zoomed canvas scrolls */
   top: 16px;
   right: 16px;
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.4);
-  color: var(--on-primary);
-  opacity: 0.85;
-}
-.canvas-wrap:fullscreen .fullscreen-btn:hover,
-.canvas-wrap:-webkit-full-screen .fullscreen-btn:hover,
-.canvas-wrap:-moz-full-screen .fullscreen-btn:hover {
+  z-index: 25;
+  background: var(--surface);
+  border: var(--border-thick);
+  color: var(--border-color);
   opacity: 1;
-  background: rgba(255, 255, 255, 0.25);
+}
+.canvas-wrap:fullscreen .fullscreen-btn:hover {
+  background: var(--bg);
+  color: var(--ink);
+  transform: translateY(-1px);
 }
 
 /* ══════════════════════════════════════════
@@ -587,4 +595,133 @@ button:active,
     flex-direction: column;
     align-items: flex-start;
   }
+}
+
+/* ══════════════════════════════════════════
+   Fullscreen control drawer (left rail + slide-out panel)
+══════════════════════════════════════════ */
+.fs-panel {
+  display: none; /* normal mode: drawer does not exist visually */
+}
+
+.canvas-wrap:fullscreen .fs-panel {
+  display: block;
+  position: fixed; /* fullscreen element is the containing block */
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 280px;
+  padding: 18px 16px;
+  background: var(--surface); /* white, on-theme */
+  border-right: var(--border-thick);
+  box-shadow: var(--shadow);
+  text-align: left;
+  overflow-y: auto;
+  z-index: 30;
+  transform: translateX(-100%);
+  transition: transform 0.25s ease;
+}
+.canvas-wrap:fullscreen .fs-panel.open {
+  transform: translateX(0);
+}
+
+/* rail tab — sibling of the panel; slides with it via `left` */
+.fs-rail {
+  display: none; /* normal mode: hidden */
+}
+.canvas-wrap:fullscreen .fs-rail {
+  display: flex;
+  position: fixed;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 42px;
+  height: 72px;
+  padding: 0;
+  border: var(--border-thick);
+  border-left: none;
+  border-radius: 0 var(--radius) var(--radius) 0;
+  background: var(--surface);
+  color: var(--border-color);
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  z-index: 35; /* above the panel */
+  transition: left 0.25s ease;
+}
+.canvas-wrap:fullscreen .fs-rail.open {
+  left: 280px; /* docks flush to the open panel's right edge */
+}
+.canvas-wrap:fullscreen .fs-rail:hover {
+  background: var(--bg);
+  color: var(--ink);
+}
+
+.canvas-wrap:fullscreen .fs-panel-title {
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  margin-bottom: 12px;
+}
+.canvas-wrap:fullscreen .fs-divider {
+  border-top: var(--border-soft-thin);
+  margin: 14px 0;
+}
+.canvas-wrap:fullscreen .fs-crop-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  margin: 10px 0 4px;
+}
+
+/* transported .controls — strip its white card look, stack vertically */
+.canvas-wrap:fullscreen .controls {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 0;
+  margin-bottom: 0;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+}
+.canvas-wrap:fullscreen .controls .ctrl-grp {
+  min-width: 0;
+}
+.canvas-wrap:fullscreen .controls .btn-row {
+  flex-wrap: wrap;
+}
+
+/* status caption — permanent white chip, bottom-left */
+.canvas-wrap:fullscreen .status-bar {
+  position: fixed;
+  left: 14px;
+  bottom: 14px;
+  margin-top: 0;
+  padding: 8px 14px;
+  background: var(--surface);
+  border: var(--border-thick);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  z-index: 40;
+}
+
+/* zoom cluster + buttons: fixed while scrolling, white on black */
+.canvas-wrap:fullscreen .zoom-controls {
+  position: fixed;
+  top: 16px;
+  right: 60px; /* 16 + 34px fullscreen btn + 10 gap */
+  z-index: 25;
+}
+.canvas-wrap:fullscreen .zoom-btn {
+  background: var(--surface);
+  border: var(--border-thick);
+  color: var(--border-color);
+  opacity: 1;
 }
