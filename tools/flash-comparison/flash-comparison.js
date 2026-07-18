@@ -50,6 +50,9 @@ const el = {
   speedSlider: document.getElementById("speedSlider"),
   speedVal: document.getElementById("speedVal"),
   flashCanvas: document.getElementById("flashCanvas"),
+  zoomIn: document.getElementById("zoomIn"),
+  zoomOut: document.getElementById("zoomOut"),
+  zoomReset: document.getElementById("zoomReset"),
   placeholder: document.getElementById("placeholder"),
   dot: document.getElementById("dot"),
   showLbl: document.getElementById("showLbl"),
@@ -65,6 +68,33 @@ const el = {
 };
 
 const ctx = el.flashCanvas.getContext("2d");
+
+/* ── Zoom ── */
+let zoomLevel = 1;
+const ZOOM_MIN = 1;
+const ZOOM_MAX = 4;
+const ZOOM_STEP = 0.25; // 100% → 125% → 150% → … → 400%
+
+function applyZoom() {
+  el.zoomReset.textContent = Math.round(zoomLevel * 100) + "%";
+  const img = state.showing === "A" ? state.imgA : state.imgB;
+  if (img && el.flashCanvas.style.display === "block") {
+    showImage(img); // re-fits the same bitmap at the new zoom
+  }
+}
+
+el.zoomIn.addEventListener("click", () => {
+  zoomLevel = Math.min(ZOOM_MAX, zoomLevel + ZOOM_STEP);
+  applyZoom();
+});
+el.zoomOut.addEventListener("click", () => {
+  zoomLevel = Math.max(ZOOM_MIN, zoomLevel - ZOOM_STEP);
+  applyZoom();
+});
+el.zoomReset.addEventListener("click", () => {
+  zoomLevel = ZOOM_MIN;
+  applyZoom();
+});
 
 /* ══════════════════════════════════════════
    Collapse / expand helpers
@@ -254,8 +284,11 @@ function showImage(img) {
 
   el.flashCanvas.width = img.width;
   el.flashCanvas.height = img.height;
-  el.flashCanvas.style.width = SHARED_CSS_W + "px";
-  el.flashCanvas.style.height = Math.round(img.height / RENDER_SCALE) + "px";
+  el.flashCanvas.style.width = Math.round(SHARED_CSS_W * zoomLevel) + "px";
+  el.flashCanvas.style.height =
+    Math.round((img.height / RENDER_SCALE) * zoomLevel) + "px";
+  // at 100% keep the responsive clamp; when zoomed, let it overflow + scroll
+  el.flashCanvas.style.maxWidth = zoomLevel > 1 ? "none" : "";
   ctx.imageSmoothingEnabled = true;
   ctx.imageSmoothingQuality = "high";
   ctx.clearRect(0, 0, img.width, img.height);
@@ -457,6 +490,8 @@ el.resetBtn.addEventListener("click", () => {
     el[id].textContent = "0";
   });
 
+  zoomLevel = 1;
+  el.zoomReset.textContent = "100%";
   el.flashCanvas.style.display = "none";
   el.placeholder.style.display = "block";
   el.startBtn.disabled = true;
